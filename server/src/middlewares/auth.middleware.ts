@@ -265,3 +265,5 @@ export const optionalAuth = async (
     next();
   }
 };
+
+// 5s max for DB fallback in resolveUser
