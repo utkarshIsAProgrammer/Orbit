@@ -321,3 +321,5 @@ const uploadGlimpseMedia = multer({
 
 export { uploadPostImages, uploadChatMedia, uploadPostMedia, uploadGlimpseMedia };
 export default upload;
+
+// guard: default to application/octet-stream if Content-Type header absent
