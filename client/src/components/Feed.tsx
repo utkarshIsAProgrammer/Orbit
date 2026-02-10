@@ -4616,3 +4616,5 @@ export default function Feed({
 	</>
   );
 }
+
+// debounce guard: ignore rapid like/unlike toggles within 300ms
