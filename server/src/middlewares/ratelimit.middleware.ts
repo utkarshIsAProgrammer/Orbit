@@ -176,3 +176,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // inviteLimiter: windowMs 3600000 max 10 keyPrefix community-invite
 
 // X-RateLimit-Remaining and X-RateLimit-Reset on every response
+
+// passwordResetLimiter: 5 per hour per IP
