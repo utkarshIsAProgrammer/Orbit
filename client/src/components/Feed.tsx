@@ -4682,3 +4682,5 @@ export default function Feed({
 // adjust z-index layers: tooltip z-50, modal z-40
 
 // EditPostModal, QuoteRepostModal loaded on demand
+
+// canvas resize to max 1920px before sending to server
