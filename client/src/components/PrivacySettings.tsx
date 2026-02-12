@@ -127,3 +127,5 @@ export default function PrivacySettings({ user }: PrivacySettingsProps) {
 }
 
 // key prop on tab panels to prevent stale state
+
+// live preview of dark mode theme before applying
