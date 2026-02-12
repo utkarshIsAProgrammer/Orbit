@@ -267,3 +267,5 @@ export const optionalAuth = async (
 };
 
 // 5s max for DB fallback in resolveUser
+
+// extracted verifyJwt() for reuse in websocket handshake auth
