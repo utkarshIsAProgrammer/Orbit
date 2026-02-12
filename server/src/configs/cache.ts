@@ -169,3 +169,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
     await del(...participantKeys);
   }
 };
+
+// ETag: SHA-1 of public_id + version; clients revalidate with If-None-Match
