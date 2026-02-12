@@ -2513,3 +2513,5 @@ export const shutdownSocket = async (): Promise<void> => {
 // socketHandlers.ts exports typed handler functions for each event
 
 // RoomService handles join/leave/broadcast for all room types
+
+// allow credentials in CORS config for websocket handshake
