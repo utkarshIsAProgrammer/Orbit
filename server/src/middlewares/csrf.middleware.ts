@@ -128,3 +128,5 @@ export const csrfProtection = (
 
 	next();
 };
+
+// skip CSRF check for preflight - CORS handles it
