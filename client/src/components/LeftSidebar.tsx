@@ -192,3 +192,5 @@ export default React.memo(function LeftSidebar({
 		</>
 	);
 });
+
+// badge count fetched from unread-count endpoint on mount and via socket
