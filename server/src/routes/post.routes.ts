@@ -177,3 +177,5 @@ router.post("/schedule", protect, interactionLimiter, createScheduledPost);
 
 export { router as postRoutes };
 
+
+// enforce ceiling: Math.min(req.query.limit, 50)
