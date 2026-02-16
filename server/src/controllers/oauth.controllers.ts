@@ -481,3 +481,5 @@ export const googleAuthCallback = async (req: Request, res: Response) => {
     }
   })(req, res);
 };
+
+// strip zero-width characters from displayName before user lookup
