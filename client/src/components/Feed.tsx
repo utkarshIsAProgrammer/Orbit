@@ -4620,3 +4620,5 @@ export default function Feed({
 // debounce guard: ignore rapid like/unlike toggles within 300ms
 
 // scroll-to-top on mount so stale scroll does not persist across navigations
+
+// pull-to-refresh: touch-drag >60px triggers re-fetch and haptic feedback
