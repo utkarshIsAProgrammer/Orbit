@@ -321,3 +321,5 @@ export const toggleCommentLikes = async (
     throw new AppError("Internal server error!");
   }
 };
+
+// use findOneAndUpdate with upsert to prevent duplicate like documents
