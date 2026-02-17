@@ -6828,3 +6828,5 @@ useMenuViewportClamp(communityMenuRef, communityMenu);
 }
 
 // skeleton placeholder renders while members endpoint loads
+
+// images use data-src + IntersectionObserver; load on viewport entry
