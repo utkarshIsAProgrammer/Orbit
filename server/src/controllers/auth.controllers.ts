@@ -471,3 +471,5 @@ export const logout = async (req: Request, res: Response) => {
     throw new AppError("Internal server error!");
   }
 };
+
+// always return success regardless of email existence (timing-safe)
