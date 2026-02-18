@@ -104,3 +104,5 @@ curriculum). When you change behavior:
 - ❌ Don't use `:` in queue names.
 - ❌ Don't commit `.env`, credentials, or real tokens.
 - ❌ Don't remove comments to "clean up" — the why matters here.
+
+## PR Template - All pull requests must use the GitHub PR template.
