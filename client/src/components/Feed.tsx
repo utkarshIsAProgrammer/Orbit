@@ -4622,3 +4622,5 @@ export default function Feed({
 // scroll-to-top on mount so stale scroll does not persist across navigations
 
 // pull-to-refresh: touch-drag >60px triggers re-fetch and haptic feedback
+
+// optional alt-text field for accessibility; stored as post.images[].alt
