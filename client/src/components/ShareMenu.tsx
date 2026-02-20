@@ -197,3 +197,5 @@ interface ShareMenuProps {
 }
 
 // copy deep link to clipboard; show toast confirmation
+
+// use navigator.share for mobile; fallback to clipboard on desktop
