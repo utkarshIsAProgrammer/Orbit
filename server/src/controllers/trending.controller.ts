@@ -134,3 +134,5 @@ export const getTrendingTopics = async (req: Request, res: Response) => {
 // read from secondaries to reduce primary load
 
 //  fallback for missing fields in aggregation
+
+// allowDiskUse:true for trending hashtag aggregation
