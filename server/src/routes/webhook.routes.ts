@@ -11,3 +11,5 @@ router.delete("/:webhookId", deleteWebhook);
 router.post("/:webhookId/test", interactionLimiter, testWebhook);
 
 export default router;
+
+// HMAC-SHA256 verify Upstash webhook signature header
