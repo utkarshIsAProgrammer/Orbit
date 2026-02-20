@@ -141,3 +141,5 @@ router.get("/me", protect, getCurrentUser);
 export { router as authRoutes };
 
 // health/ready verifies Mongo ping + Redis PING before returning 200
+
+// health response includes dau: count distinct userIds seen in last 24h via Redis SET
