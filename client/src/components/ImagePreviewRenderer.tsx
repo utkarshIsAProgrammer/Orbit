@@ -112,3 +112,5 @@ export default function ImagePreviewRenderer() {
     </AnimatePresence>
   );
 }
+
+// z-index: 9999 to sit above all overlays and toast notifications
