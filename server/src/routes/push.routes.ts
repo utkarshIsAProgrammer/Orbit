@@ -10,3 +10,5 @@ router.post("/subscribe", protect, generalLimiter, subscribe);
 router.post("/unsubscribe", protect, generalLimiter, unsubscribe);
 
 export { router as pushRoutes };
+
+// PATCH /api/push/preferences - per-category opt-in/out: likes, comments, follows, messages
