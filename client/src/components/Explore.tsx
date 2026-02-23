@@ -1072,3 +1072,5 @@ export default function Explore({
     </div>
   );
 }
+
+// IntersectionObserver on sentinel div triggers next-page fetch at bottom
