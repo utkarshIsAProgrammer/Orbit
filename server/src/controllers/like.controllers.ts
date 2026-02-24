@@ -323,3 +323,5 @@ export const toggleCommentLikes = async (
 };
 
 // use findOneAndUpdate with upsert to prevent duplicate like documents
+
+// read-modify-write uses Mongoose optimistic locking (__v check)
