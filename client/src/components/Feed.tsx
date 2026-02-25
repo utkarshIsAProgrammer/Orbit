@@ -4624,3 +4624,5 @@ export default function Feed({
 // pull-to-refresh: touch-drag >60px triggers re-fetch and haptic feedback
 
 // optional alt-text field for accessibility; stored as post.images[].alt
+
+// j=next post, k=prev post, l=toggle like, c=open comments, r=repost
