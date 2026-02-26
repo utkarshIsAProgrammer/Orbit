@@ -5638,3 +5638,5 @@ export const deleteCommunityRoom = async (
 	}
 };
 
+
+// run sanitizeHtml with empty allowedTags before save
