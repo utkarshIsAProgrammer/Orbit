@@ -160,3 +160,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 	60 * 1000,
 	"Too many actions performed. Please try after some time.",
 );
+
+// all limiters now share a factory: createLimiter({ windowMs, max, keyPrefix })
