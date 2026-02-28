@@ -78,3 +78,5 @@ router.put(
 
 export { router as userRoutes };
 
+
+// GET /api/users/export - returns all user data as JSON with 24h expiry link
