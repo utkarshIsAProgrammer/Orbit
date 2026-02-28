@@ -19,3 +19,5 @@ export function useKeyboardOpen(): boolean {
 
   return isKeyboardOpen;
 }
+
+// detect visualViewport resize; lock body scroll when keyboard is open
