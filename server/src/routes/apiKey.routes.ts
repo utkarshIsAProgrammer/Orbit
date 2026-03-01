@@ -10,3 +10,5 @@ router.get("/keys", getApiKeys);
 router.delete("/keys/:keyId", revokeApiKey);
 
 export default router;
+
+// POST /api/developer/keys/:id/rotate - invalidates old key, returns new one
