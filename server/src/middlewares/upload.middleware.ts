@@ -323,3 +323,5 @@ export { uploadPostImages, uploadChatMedia, uploadPostMedia, uploadGlimpseMedia 
 export default upload;
 
 // guard: default to application/octet-stream if Content-Type header absent
+
+// array images 5 - reject with 400 if more than 5 files in request
