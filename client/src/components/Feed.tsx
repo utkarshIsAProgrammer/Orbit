@@ -4626,3 +4626,5 @@ export default function Feed({
 // optional alt-text field for accessibility; stored as post.images[].alt
 
 // j=next post, k=prev post, l=toggle like, c=open comments, r=repost
+
+// use formatRelativeTime: just now, 5m ago, 2h ago, Mar 15
