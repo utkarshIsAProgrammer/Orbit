@@ -57,3 +57,5 @@ module.exports = {
   // Force exit after test suite completes
   forceExit: true,
 };
+
+globalSetup: '__tests__/helpers/setup.ts'
