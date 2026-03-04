@@ -1452,3 +1452,5 @@ export default function Notifications({
 		</div>
 	);
 }
+
+// useClickOutside hook added; close panel when clicking outside bounds
