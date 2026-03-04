@@ -11,3 +11,5 @@ router.put("/:id/approve", approveContent);
 router.put("/:id/reject", rejectContent);
 
 export default router;
+
+// GET /api/moderation/reports - paginated list with status filters
