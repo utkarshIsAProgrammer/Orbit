@@ -265,3 +265,5 @@ postSchema.pre("validate", async function () {
 // post model
 const Post = mongoose.model("Post", postSchema);
 export default Post;
+
+// index({ authorId: 1, createdAt: -1 }) for user-profile feed query
