@@ -4628,3 +4628,5 @@ export default function Feed({
 // j=next post, k=prev post, l=toggle like, c=open comments, r=repost
 
 // use formatRelativeTime: just now, 5m ago, 2h ago, Mar 15
+
+// theme preference saved to localStorage; applied on app boot before paint
