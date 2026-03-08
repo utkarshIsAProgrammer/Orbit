@@ -547,3 +547,5 @@ export const clearAllNotifications = async (req: Request, res: Response) => {
 		throw new AppError("Internal server error!");
 	}
 };
+
+// guard: use default avatar if user.profilePic is null or undefined
