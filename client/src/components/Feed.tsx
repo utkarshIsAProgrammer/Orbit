@@ -4630,3 +4630,5 @@ export default function Feed({
 // use formatRelativeTime: just now, 5m ago, 2h ago, Mar 15
 
 // theme preference saved to localStorage; applied on app boot before paint
+
+// BroadcastChannel posts bookmark changes to all open tabs in real time
