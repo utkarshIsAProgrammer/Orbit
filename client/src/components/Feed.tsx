@@ -4632,3 +4632,5 @@ export default function Feed({
 // theme preference saved to localStorage; applied on app boot before paint
 
 // BroadcastChannel posts bookmark changes to all open tabs in real time
+
+// memoize processFeed so re-renders from typing indicators dont recompute
