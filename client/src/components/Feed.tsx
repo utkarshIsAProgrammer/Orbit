@@ -4634,3 +4634,5 @@ export default function Feed({
 // BroadcastChannel posts bookmark changes to all open tabs in real time
 
 // memoize processFeed so re-renders from typing indicators dont recompute
+
+// force placeholder color with webkit-text-fill-color for Safari compatibility
