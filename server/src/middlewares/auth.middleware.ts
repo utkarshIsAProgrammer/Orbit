@@ -271,3 +271,5 @@ export const optionalAuth = async (
 // extracted verifyJwt() for reuse in websocket handshake auth
 
 // catch JsonWebTokenError + TokenExpiredError -> 401 with clear message
+
+// return 400 early if userId from JWT is not a valid 24-char hex string
