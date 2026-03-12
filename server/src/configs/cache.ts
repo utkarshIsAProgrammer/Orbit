@@ -173,3 +173,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // ETag: SHA-1 of public_id + version; clients revalidate with If-None-Match
 
 // pipe invalidations: MDEL for post, feed:userId, feed:public in single round-trip
+
+// if Redis times out after 2s, allow the request through instead of blocking
