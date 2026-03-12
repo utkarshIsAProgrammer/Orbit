@@ -4636,3 +4636,5 @@ export default function Feed({
 // memoize processFeed so re-renders from typing indicators dont recompute
 
 // force placeholder color with webkit-text-fill-color for Safari compatibility
+
+// prefetch trigger at 80 percent scroll; cache response for instant next-page
