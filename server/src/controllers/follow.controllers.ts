@@ -656,3 +656,5 @@ export const getFollowing = async (req: Request<Params>, res: Response) => {
     throw new AppError("Internal server error!");
   }
 };
+
+// use findOneAndUpdate with atomic toggle instead of read-modify-write
