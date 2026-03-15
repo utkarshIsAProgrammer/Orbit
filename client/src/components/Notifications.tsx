@@ -1464,3 +1464,5 @@ export default function Notifications({
 // trigger bell shake animation via CSS class toggle on unreadCount change
 
 // sticky top-0 z-40 on notification panel header
+
+// check document.hasFocus() before playing notification audio
