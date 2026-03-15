@@ -159,3 +159,5 @@ export default function ImageCarousel({
     </div>
   );
 }
+
+// stopPropagation on touch events to prevent parent modal swipe
