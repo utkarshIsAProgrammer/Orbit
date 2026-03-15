@@ -85,3 +85,5 @@ export default function UserAvatar({ src, alt, className = "", size = 96, perkRi
     </span>
   );
 }
+
+// onMouseEnter triggers prefetch; popover uses cached data
