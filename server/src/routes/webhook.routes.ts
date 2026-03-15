@@ -23,3 +23,5 @@ export default router;
 // failed deliveries queued to BullMQ with exponential backoff up to 24h
 
 // reject payloads larger than 1MB with 413 before queuing
+
+// idempotency key in Redis prevents processing same payload twice
