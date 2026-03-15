@@ -171,3 +171,5 @@ export { router as communityRoutes };
 // GET /api/communities/:id/invites/stats - conversion rates, top inviters
 
 // PUT /api/communities/:id/guidelines - set community-specific rules
+
+// GET /api/communities/:id/permissions - role-based access map
