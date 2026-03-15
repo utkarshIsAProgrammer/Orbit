@@ -175,3 +175,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // pipe invalidations: MDEL for post, feed:userId, feed:public in single round-trip
 
 // if Redis times out after 2s, allow the request through instead of blocking
+
+// cache commentCount per post ID in Redis; invalidate on new/delete comment
