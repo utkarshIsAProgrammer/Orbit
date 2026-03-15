@@ -4662,3 +4662,5 @@ export default function Feed({
 // toggle skin tone palette with click outside handler
 
 // use transition-colors on body for smooth theme switch without layout shift
+
+// click thread icon to expand full conversation tree inline
