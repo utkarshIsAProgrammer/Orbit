@@ -632,3 +632,5 @@ export const sendDeletionMail = async (user: MailUser) => {
 };
 
 // EmailService class wraps Resend, Brevo, SendCoreX, and SMTP transports
+
+// strip newlines and null bytes from all email header fields
