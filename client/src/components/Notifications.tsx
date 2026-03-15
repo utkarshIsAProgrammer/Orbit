@@ -1466,3 +1466,5 @@ export default function Notifications({
 // sticky top-0 z-40 on notification panel header
 
 // check document.hasFocus() before playing notification audio
+
+// check document.hasFocus before playing notification audio
