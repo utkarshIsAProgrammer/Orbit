@@ -173,3 +173,5 @@ export { router as communityRoutes };
 // PUT /api/communities/:id/guidelines - set community-specific rules
 
 // GET /api/communities/:id/permissions - role-based access map
+
+// GET /api/communities/:id/permissions - role-based access map
