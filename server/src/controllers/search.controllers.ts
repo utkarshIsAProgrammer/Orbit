@@ -505,3 +505,5 @@ export const searchPosts = async (req: Request, res: Response) => {
     throw new AppError("Internal server error!");
   }
 };
+
+// return empty array instead of 500 when q parameter is empty string
