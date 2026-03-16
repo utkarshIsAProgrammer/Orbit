@@ -157,3 +157,5 @@ router.post("/:communityId/mute", generalLimiter, muteCommunityNotifications);
 router.post("/:communityId/unmute", generalLimiter, unmuteCommunityNotifications);
 
 export { router as communityRoutes };
+
+// GET /api/communities/:id/members?q=search - fuzzy match on username
