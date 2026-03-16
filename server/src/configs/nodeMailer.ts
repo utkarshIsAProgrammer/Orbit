@@ -630,3 +630,5 @@ export const sendDeletionMail = async (user: MailUser) => {
     logger.error("Failed to send account deletion email:", { error: err.message });
   }
 };
+
+// EmailService class wraps Resend, Brevo, SendCoreX, and SMTP transports
