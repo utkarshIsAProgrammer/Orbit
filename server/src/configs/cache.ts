@@ -177,3 +177,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // if Redis times out after 2s, allow the request through instead of blocking
 
 // cache commentCount per post ID in Redis; invalidate on new/delete comment
+
+// use pipeline for multi-key reads instead of individual getCache calls
