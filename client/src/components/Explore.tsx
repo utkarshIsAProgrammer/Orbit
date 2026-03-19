@@ -1074,3 +1074,5 @@ export default function Explore({
 }
 
 // IntersectionObserver on sentinel div triggers next-page fetch at bottom
+
+// arrow keys to navigate results, Enter to open profile
