@@ -1097,3 +1097,5 @@ export default function CommentNode({
 		</div>
 	);
 }
+
+// nested replies use ml-8 margin-left to visually indent
