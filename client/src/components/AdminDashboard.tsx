@@ -2120,3 +2120,5 @@ export default function AdminDashboard() {
 		</div>
 	);
 }
+
+// React.lazy + Suspense for AdminDashboard; only loaded for admin users
