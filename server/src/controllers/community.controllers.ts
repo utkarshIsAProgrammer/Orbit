@@ -5640,3 +5640,5 @@ export const deleteCommunityRoom = async (
 
 
 // run sanitizeHtml with empty allowedTags before save
+
+// zod validation: z.string min 3 max 30 for community name
