@@ -2511,3 +2511,5 @@ export const shutdownSocket = async (): Promise<void> => {
 // drop events with timestamp older than last known event
 
 // socketHandlers.ts exports typed handler functions for each event
+
+// RoomService handles join/leave/broadcast for all room types
