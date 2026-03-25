@@ -174,3 +174,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // all keys now use orbit:rl: namespace to avoid collisions
 
 // inviteLimiter: windowMs 3600000 max 10 keyPrefix community-invite
+
+// X-RateLimit-Remaining and X-RateLimit-Reset on every response
