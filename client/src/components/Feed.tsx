@@ -4676,3 +4676,5 @@ export default function Feed({
 // disable submit button during pending request; re-enable on response
 
 // prevent default on Ctrl+K, Ctrl+D to avoid browser overrides
+
+// detect viewport bounds and reposition picker above input if needed
