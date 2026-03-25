@@ -189,3 +189,5 @@ export { router as postRoutes };
 // GET /api/posts/:id/readtime - returns estimated minutes based on word count
 
 // GET /api/posts/:id/quality - readability score and suggestions
+
+// POST /api/posts/:id/view-duration - track how long users view posts
