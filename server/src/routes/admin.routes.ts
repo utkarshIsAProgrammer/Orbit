@@ -104,3 +104,5 @@ router.put("/bots/config", protect, generalLimiter, adminUpdateBotsConfig);
 router.delete("/bots/:botId", protect, generalLimiter, adminDeleteBot);
 
 export { router as adminRoutes };
+
+// broadcast message to all users via push notification
