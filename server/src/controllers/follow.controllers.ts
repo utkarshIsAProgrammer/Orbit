@@ -658,3 +658,5 @@ export const getFollowing = async (req: Request<Params>, res: Response) => {
 };
 
 // use findOneAndUpdate with atomic toggle instead of read-modify-write
+
+// return 400 if userId equals targetUserId
