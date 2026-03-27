@@ -129,3 +129,5 @@ export default function ConfirmDialog({
 		</AnimatePresence>
 	);
 }
+
+// use theme-aware Tailwind classes instead of hardcoded colors
