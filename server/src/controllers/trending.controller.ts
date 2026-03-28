@@ -128,3 +128,5 @@ export const getTrendingTopics = async (req: Request, res: Response) => {
     throw new AppError("Internal server error!");
   }
 };
+
+// Redis cache key trending:hashtags with TTL 900s
