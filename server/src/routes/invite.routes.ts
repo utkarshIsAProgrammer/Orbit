@@ -23,3 +23,5 @@ export { router as inviteRoutes };
 // regex check: /^[A-Z0-9]{8}$/ before querying database
 
 // use crypto.timingSafeEqual for code comparison instead of ===
+
+// configurable TTL: 1h, 24h, 7d, 30d for invite links
