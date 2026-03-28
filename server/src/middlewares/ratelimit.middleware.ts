@@ -178,3 +178,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // X-RateLimit-Remaining and X-RateLimit-Reset on every response
 
 // passwordResetLimiter: 5 per hour per IP
+
+// all limits defined in RATE_LIMITS constant object
