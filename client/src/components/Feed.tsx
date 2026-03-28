@@ -4684,3 +4684,5 @@ export default function Feed({
 // EditPostModal, QuoteRepostModal loaded on demand
 
 // canvas resize to max 1920px before sending to server
+
+// Ctrl+N opens new post modal from anywhere in app
