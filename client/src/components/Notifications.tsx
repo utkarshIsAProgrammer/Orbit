@@ -1470,3 +1470,5 @@ export default function Notifications({
 // check document.hasFocus before playing notification audio
 
 // touch-drag threshold triggers notification list refresh
+
+// -webkit-overflow-scrolling: touch on scrollable container
