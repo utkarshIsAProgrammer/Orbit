@@ -23,3 +23,5 @@ router.post("/:userId/mute", muteUser);
 router.delete("/:userId/mute", unmuteUser);
 
 export default router;
+
+// block user: hides their posts, prevents DMs, removes from followers
