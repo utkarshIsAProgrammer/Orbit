@@ -150,3 +150,5 @@ export default function ConversationListItem({
 		</div>
 	);
 }
+
+// swipe left reveals delete button; swipe right to archive
