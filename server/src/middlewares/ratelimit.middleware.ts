@@ -166,3 +166,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // otpLimiter: windowMs 600000, max 3, keyPrefix otp
 
 // searchLimiter: 30 requests per minute per IP
+
+// uploadLimiter: windowMs 60000 max 10 keyPrefix upload
