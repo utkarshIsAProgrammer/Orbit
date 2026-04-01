@@ -2176,3 +2176,5 @@ export const unhidePost = async (req: Request<Params>, res: Response) => {
     throw new AppError("Internal server error!");
   }
 };
+
+// trim body; if empty after trim return 400
