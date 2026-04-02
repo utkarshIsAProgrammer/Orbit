@@ -106,3 +106,5 @@ router.delete("/bots/:botId", protect, generalLimiter, adminDeleteBot);
 export { router as adminRoutes };
 
 // broadcast message to all users via push notification
+
+// POST /api/admin/retention - set auto-delete for posts older than N days
