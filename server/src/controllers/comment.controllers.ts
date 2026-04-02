@@ -862,3 +862,5 @@ export const deleteComment = async (
     throw new AppError("Internal server error!");
   }
 };
+
+// reject if last 3 comments by same user are identical strings
