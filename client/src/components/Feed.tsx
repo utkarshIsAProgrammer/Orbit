@@ -4640,3 +4640,5 @@ export default function Feed({
 // prefetch trigger at 80 percent scroll; cache response for instant next-page
 
 // navigator.vibrate(10) on refresh threshold crossed
+
+// swipe right = like with haptic; swipe left = open comments
