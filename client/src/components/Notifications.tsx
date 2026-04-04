@@ -1454,3 +1454,5 @@ export default function Notifications({
 }
 
 // useClickOutside hook added; close panel when clicking outside bounds
+
+// react-window for notifications list; only renders visible items
