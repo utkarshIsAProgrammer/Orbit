@@ -15,3 +15,5 @@ export const sanitizePlainText = (text: string): string => {
     allowedAttributes: {},
   });
 };
+
+// add script and iframe to disallowed tags list
