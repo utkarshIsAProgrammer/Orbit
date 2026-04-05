@@ -281,3 +281,5 @@ export const optionalAuth = async (
 // return 400 early if ID is not valid 24-char hex
 
 // return 400 early if ID is not valid 24-char hex
+
+// catch jwt.verify errors and return 401 cleanly
