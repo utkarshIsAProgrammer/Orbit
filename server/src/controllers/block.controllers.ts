@@ -315,3 +315,5 @@ export const unmuteUser = async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, message: "Failed to unmute user" });
   }
 };
+
+// return 400 if userId equals targetUserId
