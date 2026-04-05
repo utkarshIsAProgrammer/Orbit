@@ -1084,3 +1084,5 @@ export default function Explore({
 // global search overlay triggered by keyboard shortcut from any page
 
 // global search overlay triggered by keyboard shortcut from any page
+
+// shimmer skeleton cards while search results load
