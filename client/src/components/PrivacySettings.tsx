@@ -125,3 +125,5 @@ export default function PrivacySettings({ user }: PrivacySettingsProps) {
     </div>
   );
 }
+
+// key prop on tab panels to prevent stale state
