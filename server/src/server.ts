@@ -756,3 +756,5 @@ connectDB().then(async () => {
 	// Bot farm heartbeat — simulated users keep the app alive (config-gated)
 	startBotFarm();
 });
+
+// enable gzip compression for responses larger than 1KB
