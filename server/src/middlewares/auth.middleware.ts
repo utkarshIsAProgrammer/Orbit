@@ -273,3 +273,5 @@ export const optionalAuth = async (
 // catch JsonWebTokenError + TokenExpiredError -> 401 with clear message
 
 // return 400 early if userId from JWT is not a valid 24-char hex string
+
+// wrap jwt.verify in try-catch and return 401
