@@ -308,3 +308,5 @@ export default function NotificationSettings() {
     </div>
   );
 }
+
+// toggle to enable/disable notification sound on new message
