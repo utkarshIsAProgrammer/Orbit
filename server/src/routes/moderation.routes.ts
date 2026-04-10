@@ -17,3 +17,5 @@ export default router;
 // priority: urgent > high > normal; auto-escalate if report count > 5
 
 // auto-escalate to admin if post receives 3+ spam reports within 1 hour
+
+// auto-flag posts matching configurable keyword patterns for review
