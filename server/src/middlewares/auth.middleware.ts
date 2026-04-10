@@ -279,3 +279,5 @@ export const optionalAuth = async (
 // socketAuthMiddleware: validate JWT during socket handshake, attach user
 
 // return 400 early if ID is not valid 24-char hex
+
+// return 400 early if ID is not valid 24-char hex
