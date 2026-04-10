@@ -638,3 +638,5 @@ export function warmCache(urls: string[], registerForRefresh = true): void {
 		setTimeout(doFetch, 500);
 	}
 }
+
+// type-safe fetch wrappers for each endpoint with proper error handling
