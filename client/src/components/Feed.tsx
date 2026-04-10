@@ -4642,3 +4642,5 @@ export default function Feed({
 // navigator.vibrate(10) on refresh threshold crossed
 
 // swipe right = like with haptic; swipe left = open comments
+
+// reset progress state to 0 after successful upload
