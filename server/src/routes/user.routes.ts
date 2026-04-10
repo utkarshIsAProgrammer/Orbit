@@ -86,3 +86,5 @@ export { router as userRoutes };
 // GET /api/users/export/bookmarks - returns all saved posts as JSON array
 
 // GET /api/users/online - returns list of currently online user IDs from Redis
+
+// GET /api/users/:id/heatmap - GitHub-style contribution grid data
