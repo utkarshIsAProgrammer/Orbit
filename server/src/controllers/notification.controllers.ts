@@ -553,3 +553,5 @@ export const clearAllNotifications = async (req: Request, res: Response) => {
 // deduplicate: same actor + same target + same type within 60s = skip
 
 // deduplicate by actor+target+type within 60s window
+
+// check post existence before creating notification
