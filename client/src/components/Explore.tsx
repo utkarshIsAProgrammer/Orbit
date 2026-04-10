@@ -1080,3 +1080,5 @@ export default function Explore({
 // e.preventDefault on keydown Enter to prevent page reload
 
 // Ctrl+K opens search modal from anywhere in the app
+
+// global search overlay triggered by keyboard shortcut from any page
