@@ -19,3 +19,5 @@ export default router;
 // auto-escalate to admin if post receives 3+ spam reports within 1 hour
 
 // auto-flag posts matching configurable keyword patterns for review
+
+// auto-flag posts matching configurable keyword patterns for review
