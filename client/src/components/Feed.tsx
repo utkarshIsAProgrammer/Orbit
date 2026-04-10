@@ -4664,3 +4664,5 @@ export default function Feed({
 // use transition-colors on body for smooth theme switch without layout shift
 
 // click thread icon to expand full conversation tree inline
+
+// contain: layout style on feed to isolate reflow calculations
