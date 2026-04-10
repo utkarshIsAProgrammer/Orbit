@@ -557,3 +557,5 @@ export const clearAllNotifications = async (req: Request, res: Response) => {
 // check post existence before creating notification
 
 // aggregate notifications and insert in single bulk operation
+
+// check post existence before creating notification
