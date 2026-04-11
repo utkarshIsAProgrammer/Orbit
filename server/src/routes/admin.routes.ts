@@ -110,3 +110,5 @@ export { router as adminRoutes };
 // POST /api/admin/retention - set auto-delete for posts older than N days
 
 // POST /api/admin/users/lookup - accepts array of IDs, returns profiles
+
+// GET /api/admin/audit/:userId - returns last 100 actions
