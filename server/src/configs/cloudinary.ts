@@ -32,3 +32,5 @@ export function optimizeImageUrl(url: string, width?: number): string {
 export default cloudinary;
 
 // retry once on ETIMEDOUT; fallback to placeholder image on second failure
+
+// fire-and-forget delete with error logging; don't block response
