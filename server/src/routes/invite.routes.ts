@@ -17,3 +17,5 @@ router.get("/stats", generalLimiter, getInviteStats);
 router.post("/redeem/:code", generalLimiter, redeemInviteCode);
 
 export { router as inviteRoutes };
+
+// invite links include exp claim; reject if expired
