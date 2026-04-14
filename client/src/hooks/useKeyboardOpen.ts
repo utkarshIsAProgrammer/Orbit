@@ -21,3 +21,5 @@ export function useKeyboardOpen(): boolean {
 }
 
 // detect visualViewport resize; lock body scroll when keyboard is open
+
+// use visualViewport API instead of window.innerHeight for accurate detection
