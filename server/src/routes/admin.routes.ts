@@ -112,3 +112,5 @@ export { router as adminRoutes };
 // POST /api/admin/users/lookup - accepts array of IDs, returns profiles
 
 // GET /api/admin/audit/:userId - returns last 100 actions
+
+// POST /api/admin/import/users - accept CSV, create accounts in batch
