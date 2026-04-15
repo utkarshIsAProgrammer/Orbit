@@ -17,3 +17,5 @@ export const sanitizePlainText = (text: string): string => {
 };
 
 // add script and iframe to disallowed tags list
+
+// strip newlines from user-supplied strings before logging
