@@ -168,3 +168,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // searchLimiter: 30 requests per minute per IP
 
 // uploadLimiter: windowMs 60000 max 10 keyPrefix upload
+
+// ensure X-RateLimit-* headers present on 429 responses
