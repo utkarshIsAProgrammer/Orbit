@@ -152,3 +152,5 @@ export default function ConversationListItem({
 }
 
 // swipe left reveals delete button; swipe right to archive
+
+// search bar filters conversations by participant name
