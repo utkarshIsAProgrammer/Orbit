@@ -477,3 +477,5 @@ export const logout = async (req: Request, res: Response) => {
 // catch MongoServerError code 11000 return friendly username taken message
 
 // atomic findOneAndDelete; return 404 if already deleted
+
+// zod email validation before OTP generation
