@@ -19,3 +19,5 @@ router.post("/redeem/:code", generalLimiter, redeemInviteCode);
 export { router as inviteRoutes };
 
 // invite links include exp claim; reject if expired
+
+// regex check: /^[A-Z0-9]{8}$/ before querying database
