@@ -5650,3 +5650,5 @@ export const deleteCommunityRoom = async (
 // upsert RSVP with unique compound index on event+user
 
 // block leave if role==owner and no other owners exist
+
+// render markdown in community description with sanitize-html
