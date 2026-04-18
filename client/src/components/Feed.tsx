@@ -4678,3 +4678,5 @@ export default function Feed({
 // prevent default on Ctrl+K, Ctrl+D to avoid browser overrides
 
 // detect viewport bounds and reposition picker above input if needed
+
+// adjust z-index layers: tooltip z-50, modal z-40
