@@ -196,3 +196,5 @@ export default React.memo(function LeftSidebar({
 // badge count fetched from unread-count endpoint on mount and via socket
 
 // overflow-x-hidden to prevent accidental horizontal scroll on touch
+
+// listen for unreadCount socket event to update badge instantly
