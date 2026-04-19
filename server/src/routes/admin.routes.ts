@@ -114,3 +114,5 @@ export { router as adminRoutes };
 // GET /api/admin/audit/:userId - returns last 100 actions
 
 // POST /api/admin/import/users - accept CSV, create accounts in batch
+
+// admin can login as user for support; generates temp JWT
