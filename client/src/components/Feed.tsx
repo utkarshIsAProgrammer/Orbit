@@ -4644,3 +4644,5 @@ export default function Feed({
 // swipe right = like with haptic; swipe left = open comments
 
 // reset progress state to 0 after successful upload
+
+// press ? to show overlay of all available keyboard shortcuts
