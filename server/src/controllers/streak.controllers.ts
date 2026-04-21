@@ -286,3 +286,5 @@ export const getRewardStatus = async (
 };
 
 
+
+// use MongoDB findOneAndUpdate with upsert for atomic streak increment
