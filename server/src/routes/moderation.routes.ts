@@ -13,3 +13,5 @@ router.put("/:id/reject", rejectContent);
 export default router;
 
 // GET /api/moderation/reports - paginated list with status filters
+
+// priority: urgent > high > normal; auto-escalate if report count > 5
