@@ -5271,3 +5271,5 @@ export default function App() {
 }
 
 // link rel=preconnect to res.cloudinary.com for faster image loads
+
+// read theme from localStorage before first render to prevent white flash
