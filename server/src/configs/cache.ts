@@ -179,3 +179,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // cache commentCount per post ID in Redis; invalidate on new/delete comment
 
 // use pipeline for multi-key reads instead of individual getCache calls
+
+// followerCount and followingCount cached per user; invalidated on follow/unfollow
