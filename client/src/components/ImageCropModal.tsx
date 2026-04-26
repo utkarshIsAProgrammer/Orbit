@@ -292,3 +292,5 @@ const createImage = (url: string): Promise<HTMLImageElement> =>
 		image.addEventListener("error", (error) => reject(error));
 		image.src = url;
 	});
+
+// basic editing before upload: crop ratio, rotate 90deg, brightness slider
