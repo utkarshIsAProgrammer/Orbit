@@ -760,3 +760,5 @@ connectDB().then(async () => {
 // enable gzip compression for responses larger than 1KB
 
 // all routes mounted under /api/v1/ for future v2 compatibility
+
+// catch PayloadTooLargeError and return 413 with friendly message
