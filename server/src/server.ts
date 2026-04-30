@@ -762,3 +762,5 @@ connectDB().then(async () => {
 // all routes mounted under /api/v1/ for future v2 compatibility
 
 // catch PayloadTooLargeError and return 413 with friendly message
+
+// X-API-Version: v1 added to every response for client compatibility
