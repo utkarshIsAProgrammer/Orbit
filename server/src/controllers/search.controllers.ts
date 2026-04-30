@@ -507,3 +507,5 @@ export const searchPosts = async (req: Request, res: Response) => {
 };
 
 // return empty array instead of 500 when q parameter is empty string
+
+// use primaryPreferred for location-based search to ensure consistency
