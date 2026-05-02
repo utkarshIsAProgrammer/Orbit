@@ -21,3 +21,5 @@ export { router as inviteRoutes };
 // invite links include exp claim; reject if expired
 
 // regex check: /^[A-Z0-9]{8}$/ before querying database
+
+// use crypto.timingSafeEqual for code comparison instead of ===
