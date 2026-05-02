@@ -27,3 +27,5 @@ export default router;
 // idempotency key in Redis prevents processing same payload twice
 
 // idempotency key in Redis prevents processing same payload twice
+
+// webhooks can subscribe to specific event types only
