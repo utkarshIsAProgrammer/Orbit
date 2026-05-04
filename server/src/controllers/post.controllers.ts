@@ -2178,3 +2178,5 @@ export const unhidePost = async (req: Request<Params>, res: Response) => {
 };
 
 // trim body; if empty after trim return 400
+
+// check post body against configurable blocklist before save
