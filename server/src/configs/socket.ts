@@ -2505,3 +2505,5 @@ export const shutdownSocket = async (): Promise<void> => {
     });
   }
 };
+
+// automatic reconnect with exponential backoff on adapter errors
