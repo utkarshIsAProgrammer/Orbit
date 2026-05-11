@@ -181,3 +181,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // use pipeline for multi-key reads instead of individual getCache calls
 
 // followerCount and followingCount cached per user; invalidated on follow/unfollow
+
+// AbortController timeout prevents hung connections to Cloudinary and email providers
