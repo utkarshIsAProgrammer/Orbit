@@ -4646,3 +4646,5 @@ export default function Feed({
 // reset progress state to 0 after successful upload
 
 // press ? to show overlay of all available keyboard shortcuts
+
+// Ctrl+D or Cmd+D toggles theme; persisted to localStorage
