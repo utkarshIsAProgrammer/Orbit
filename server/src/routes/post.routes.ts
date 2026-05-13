@@ -181,3 +181,5 @@ export { router as postRoutes };
 // enforce ceiling: Math.min(req.query.limit, 50)
 
 // POST /api/posts/:id/view - records view with timestamp, deduplicated per user per day
+
+// POST /api/posts/:id/chain - link posts into a numbered series
