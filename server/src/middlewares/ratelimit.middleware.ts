@@ -170,3 +170,5 @@ export const localInteractionLimiter: RateLimiter = createInMemoryLimiter(
 // uploadLimiter: windowMs 60000 max 10 keyPrefix upload
 
 // ensure X-RateLimit-* headers present on 429 responses
+
+// all keys now use orbit:rl: namespace to avoid collisions
