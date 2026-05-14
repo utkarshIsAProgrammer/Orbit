@@ -318,3 +318,5 @@ export type CommunityDocument = HydratedDocument<CommunityType>;
 export const Community = mongoose.model<CommunityDocument>("Community", communitySchema);
 
 // add unique: true to community name field with case-insensitive index
+
+// role enum with permission levels for moderation actions
