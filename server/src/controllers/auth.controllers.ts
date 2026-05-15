@@ -479,3 +479,5 @@ export const logout = async (req: Request, res: Response) => {
 // atomic findOneAndDelete; return 404 if already deleted
 
 // zod email validation before OTP generation
+
+// strip all tags from bio field on profile update
