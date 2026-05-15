@@ -764,3 +764,5 @@ connectDB().then(async () => {
 // catch PayloadTooLargeError and return 413 with friendly message
 
 // X-API-Version: v1 added to every response for client compatibility
+
+// single error handler for all routes with consistent response format
