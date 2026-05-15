@@ -156,3 +156,5 @@ export default function ConversationListItem({
 // search bar filters conversations by participant name
 
 // overflow-hidden on container to prevent content spilling out
+
+// swipe left to archive; archived chats hidden by default
