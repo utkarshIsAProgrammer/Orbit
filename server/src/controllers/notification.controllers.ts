@@ -551,3 +551,5 @@ export const clearAllNotifications = async (req: Request, res: Response) => {
 // guard: use default avatar if user.profilePic is null or undefined
 
 // deduplicate: same actor + same target + same type within 60s = skip
+
+// deduplicate by actor+target+type within 60s window
