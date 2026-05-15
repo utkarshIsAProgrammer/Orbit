@@ -511,3 +511,5 @@ export const searchPosts = async (req: Request, res: Response) => {
 // use primaryPreferred for location-based search to ensure consistency
 
 // escape special regex characters before constructing search pattern
+
+// return [] instead of undefined when index is empty
