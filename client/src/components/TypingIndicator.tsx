@@ -43,3 +43,5 @@ export default function TypingIndicator({
     </div>
   );
 }
+
+// three dots with staggered bounce animation using CSS keyframes
