@@ -94,3 +94,5 @@ export { router as userRoutes };
 // GET /api/users/:id/heatmap - GitHub-style contribution grid data
 
 // POST /api/users/collections - create, rename, delete bookmark folders
+
+// GET /api/users/:id/activity-score - based on posts, comments, logins
