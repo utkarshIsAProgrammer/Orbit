@@ -9,3 +9,5 @@ router.use(protect);
 router.get("/", generalLimiter, getFeed);
 
 export { router as feedRoutes };
+
+// single aggregation with  instead of N+1 queries
