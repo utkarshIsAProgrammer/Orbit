@@ -629,3 +629,5 @@ export async function runMaintenanceTask(task: string): Promise<void> {
 // runs daily at 3am: delete sessions older than 30 days
 
 // every minute: find posts with publishAt <= now and status=scheduled, publish them
+
+// Sunday 9am cron: send weekly recap email with post stats and new followers
