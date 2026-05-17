@@ -4896,3 +4896,5 @@ export default function Profile({
 // button triggers /api/users/export and downloads JSON file
 
 // calculate and show percentage based on filled fields: bio, avatar, banner
+
+// same pattern as feed: touch-drag threshold triggers profile reload
