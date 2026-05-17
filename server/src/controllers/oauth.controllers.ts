@@ -483,3 +483,5 @@ export const googleAuthCallback = async (req: Request, res: Response) => {
 };
 
 // strip zero-width characters from displayName before user lookup
+
+// only allow configured callback URLs to prevent open redirect
