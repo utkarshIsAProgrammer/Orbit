@@ -161,3 +161,5 @@ export default function ImageCarousel({
 }
 
 // stopPropagation on touch events to prevent parent modal swipe
+
+// use object-cover instead of object-contain to prevent stretching
