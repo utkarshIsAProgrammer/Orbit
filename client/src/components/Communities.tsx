@@ -6834,3 +6834,5 @@ useMenuViewportClamp(communityMenuRef, communityMenu);
 // show yes/no/maybe counts next to each event card
 
 // download ICS file for community events; compatible with Google/Apple Calendar
+
+// show owner/admin/mod badges next to member names
