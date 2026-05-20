@@ -42,3 +42,5 @@ export default cloudinary;
 // parse Retry-After header; wait and retry upload on 429
 
 // skip watermark on error; log warning but allow upload to succeed
+
+// skip watermark on error; log warning but allow upload to succeed
