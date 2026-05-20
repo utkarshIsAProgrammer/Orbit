@@ -555,3 +555,5 @@ export const clearAllNotifications = async (req: Request, res: Response) => {
 // deduplicate by actor+target+type within 60s window
 
 // check post existence before creating notification
+
+// aggregate notifications and insert in single bulk operation
