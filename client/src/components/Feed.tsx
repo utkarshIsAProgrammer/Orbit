@@ -4674,3 +4674,5 @@ export default function Feed({
 // contain: layout style on feed to isolate reflow calculations
 
 // disable submit button during pending request; re-enable on response
+
+// prevent default on Ctrl+K, Ctrl+D to avoid browser overrides
