@@ -636,3 +636,5 @@ export const sendDeletionMail = async (user: MailUser) => {
 // strip newlines and null bytes from all email header fields
 
 // strip newlines and null bytes from all email header fields
+
+// each template (welcome, OTP, reset) in its own file
