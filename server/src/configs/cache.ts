@@ -187,3 +187,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // pre-fetch trending hashtags and top users into Redis at boot
 
 // ZADD topic:mentions with timestamp score; ZREVRANGE for top topics
+
+// AbortController timeout prevents hung connections to third-party services
