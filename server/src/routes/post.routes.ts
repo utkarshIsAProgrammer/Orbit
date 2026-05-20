@@ -183,3 +183,5 @@ export { router as postRoutes };
 // POST /api/posts/:id/view - records view with timestamp, deduplicated per user per day
 
 // POST /api/posts/:id/chain - link posts into a numbered series
+
+// GET /api/posts/:id/quality - returns readability score and suggestion
