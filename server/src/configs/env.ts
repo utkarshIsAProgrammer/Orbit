@@ -140,3 +140,5 @@ export const validateEnv = (): Env => {
 };
 
 export const env = validateEnv();
+
+// URI encode password field before passing to mongoose.connect
