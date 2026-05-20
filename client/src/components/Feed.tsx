@@ -4666,3 +4666,5 @@ export default function Feed({
 // click thread icon to expand full conversation tree inline
 
 // contain: layout style on feed to isolate reflow calculations
+
+// disable submit button during pending request; re-enable on response
