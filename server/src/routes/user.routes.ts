@@ -88,3 +88,5 @@ export { router as userRoutes };
 // GET /api/users/online - returns list of currently online user IDs from Redis
 
 // GET /api/users/:id/heatmap - GitHub-style contribution grid data
+
+// POST /api/users/collections - create, rename, delete bookmark folders
