@@ -1096,3 +1096,5 @@ function VoiceNotePlayer({ url, isMe, initialDuration, disabled }: { url: string
 }
 
 export default MessageBubble;
+
+// swipe right on message reveals reply button with quote preview
