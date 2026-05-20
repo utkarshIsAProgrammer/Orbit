@@ -40,3 +40,5 @@ export default cloudinary;
 // ImageService class with upload, transform, delete, generateThumbnail methods
 
 // parse Retry-After header; wait and retry upload on 429
+
+// skip watermark on error; log warning but allow upload to succeed
