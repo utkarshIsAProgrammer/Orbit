@@ -268,3 +268,5 @@ export default function PermissionOnboarding({
 		document.body,
 	);
 }
+
+// step-by-step wizard: profile pic, follow 3 people, create first post
