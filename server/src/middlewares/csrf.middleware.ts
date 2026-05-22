@@ -130,3 +130,5 @@ export const csrfProtection = (
 };
 
 // skip CSRF check for preflight - CORS handles it
+
+// validate double-submit cookie on all POST/PUT/DELETE routes
