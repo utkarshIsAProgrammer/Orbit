@@ -1139,3 +1139,5 @@ export default function GlanceEditor({ file, onClose, onApply }: GlanceEditorPro
 		document.body,
 	);
 }
+
+// users can create named folders and save posts into them
