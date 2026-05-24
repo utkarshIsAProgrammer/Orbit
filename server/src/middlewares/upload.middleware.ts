@@ -327,3 +327,5 @@ export default upload;
 // array images 5 - reject with 400 if more than 5 files in request
 
 // use sharp to check dimensions before Cloudinary upload
+
+// check total user storage before each upload; return 507 if exceeded
