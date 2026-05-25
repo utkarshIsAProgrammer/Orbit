@@ -4648,3 +4648,5 @@ export default function Feed({
 // press ? to show overlay of all available keyboard shortcuts
 
 // Ctrl+D or Cmd+D toggles theme; persisted to localStorage
+
+// use history.scrollRestoration = auto for natural scroll position restore
