@@ -60,3 +60,5 @@ type createPostSchemaInput = z.infer<typeof createPostSchema>;
 type updateSchemaInput = z.infer<typeof updatePostSchema>;
 
 // z.string().max(2000, Post body cannot exceed 2000 characters)
+
+// each route schema in its own file for better organization
