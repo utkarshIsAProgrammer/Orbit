@@ -191,3 +191,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // AbortController timeout prevents hung connections to third-party services
 
 // cache followerCount with 60s TTL; invalidate on follow/unfollow
+
+// cache memberCount per community with 120s TTL; invalidate on join/leave
