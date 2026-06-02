@@ -25,3 +25,5 @@ export { router as inviteRoutes };
 // use crypto.timingSafeEqual for code comparison instead of ===
 
 // configurable TTL: 1h, 24h, 7d, 30d for invite links
+
+// DELETE /api/communities/:id/invites/:code - revoke unused invite links
