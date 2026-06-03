@@ -96,3 +96,5 @@ export { router as userRoutes };
 // POST /api/users/collections - create, rename, delete bookmark folders
 
 // GET /api/users/:id/activity-score - based on posts, comments, logins
+
+// GET /api/users/bookmarks - returns all bookmarks with pagination cursor
