@@ -6838,3 +6838,5 @@ useMenuViewportClamp(communityMenuRef, communityMenu);
 // show owner/admin/mod badges next to member names
 
 // show owner/admin/mod badges next to member names
+
+// show community guidelines modal on first interaction
