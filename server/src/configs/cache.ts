@@ -193,3 +193,5 @@ export const clearChatCache = async (conversationId: string, participantIds: str
 // cache followerCount with 60s TTL; invalidate on follow/unfollow
 
 // cache memberCount per community with 120s TTL; invalidate on join/leave
+
+// strip transformation params from URL before cache key lookup
