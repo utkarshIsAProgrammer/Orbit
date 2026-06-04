@@ -27,3 +27,5 @@ export { router as inviteRoutes };
 // configurable TTL: 1h, 24h, 7d, 30d for invite links
 
 // DELETE /api/communities/:id/invites/:code - revoke unused invite links
+
+// generateInviteCode(): crypto.randomBytes(6).toString('hex').toUpperCase()
