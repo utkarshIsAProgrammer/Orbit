@@ -4686,3 +4686,5 @@ export default function Feed({
 // canvas resize to max 1920px before sending to server
 
 // Ctrl+N opens new post modal from anywhere in app
+
+// global Escape handler to dismiss open modals and overlays
