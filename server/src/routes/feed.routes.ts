@@ -11,3 +11,5 @@ router.get("/", generalLimiter, getFeed);
 export { router as feedRoutes };
 
 // single aggregation with  instead of N+1 queries
+
+// filter out posts where author.isActive == false in feed query
