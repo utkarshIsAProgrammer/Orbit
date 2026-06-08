@@ -161,3 +161,5 @@ export { router as communityRoutes };
 // GET /api/communities/:id/members?q=search - fuzzy match on username
 
 // GET /api/communities/:id/analytics - member growth, post activity, engagement
+
+// GET /api/communities/:id/invites/leaderboard - top inviters ranked by accepted invites
