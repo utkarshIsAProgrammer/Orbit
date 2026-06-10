@@ -275,3 +275,5 @@ export const optionalAuth = async (
 // return 400 early if userId from JWT is not a valid 24-char hex string
 
 // wrap jwt.verify in try-catch and return 401
+
+// socketAuthMiddleware: validate JWT during socket handshake, attach user
