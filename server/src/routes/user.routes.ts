@@ -82,3 +82,5 @@ export { router as userRoutes };
 // GET /api/users/export - returns all user data as JSON with 24h expiry link
 
 // PATCH /api/users/preferences - weeklyDigest boolean field
+
+// GET /api/users/export/bookmarks - returns all saved posts as JSON array
