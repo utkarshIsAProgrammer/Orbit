@@ -112,3 +112,5 @@ notificationSchema.index({ type: 1, messageType: 1 });
 
 const Notification = mongoose.model("Notification", notificationSchema);
 export default Notification;
+
+// index({ userId: 1, createdAt: -1, read: 1 }) covers list query
