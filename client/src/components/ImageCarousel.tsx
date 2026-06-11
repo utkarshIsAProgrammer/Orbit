@@ -163,3 +163,5 @@ export default function ImageCarousel({
 // stopPropagation on touch events to prevent parent modal swipe
 
 // use object-cover instead of object-contain to prevent stretching
+
+// masonry-style grid for 3-4 images instead of carousel
