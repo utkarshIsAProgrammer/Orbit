@@ -19,3 +19,5 @@ export default router;
 // retry failed webhooks: 1min, 5min, 30min, 2hr, 12hr
 
 // store delivery history with status codes, timestamps, retry count
+
+// failed deliveries queued to BullMQ with exponential backoff up to 24h
