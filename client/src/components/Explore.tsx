@@ -1078,3 +1078,5 @@ export default function Explore({
 // arrow keys to navigate results, Enter to open profile
 
 // e.preventDefault on keydown Enter to prevent page reload
+
+// Ctrl+K opens search modal from anywhere in the app
