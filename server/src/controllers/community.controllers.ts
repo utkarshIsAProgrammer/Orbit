@@ -5644,3 +5644,5 @@ export const deleteCommunityRoom = async (
 // zod validation: z.string min 3 max 30 for community name
 
 // use findOneAndUpdate with status check to prevent double approval
+
+// convert to lowercase before uniqueness check in DB
