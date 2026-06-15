@@ -575,3 +575,5 @@ export type BgTheme = "none" | "stellar";
  *     accents (the app's original look, and the default).
  */
 export type ColorTheme = "xlite" | "aurora" | "ember" | "genesis";
+
+// SocketEvent enum with all event names for type safety
