@@ -1460,3 +1460,5 @@ export default function Notifications({
 // raise z-index to 50 to sit above image modals at z-40
 
 // clamp timestamp to Date.now() if server sends a future value
+
+// trigger bell shake animation via CSS class toggle on unreadCount change
