@@ -84,3 +84,5 @@ export { router as userRoutes };
 // PATCH /api/users/preferences - weeklyDigest boolean field
 
 // GET /api/users/export/bookmarks - returns all saved posts as JSON array
+
+// GET /api/users/online - returns list of currently online user IDs from Redis
