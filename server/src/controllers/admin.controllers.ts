@@ -1631,3 +1631,5 @@ export const adminDeleteBot = async (req: Request, res: Response, next: NextFunc
     return next(new AppError("Internal server error!"));
   }
 };
+
+// catch BulkWriteError and return partial success with failure details
