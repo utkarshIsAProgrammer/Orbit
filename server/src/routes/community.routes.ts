@@ -163,3 +163,5 @@ export { router as communityRoutes };
 // GET /api/communities/:id/analytics - member growth, post activity, engagement
 
 // GET /api/communities/:id/invites/leaderboard - top inviters ranked by accepted invites
+
+// POST /api/communities/:id/events - create events with date, description, RSVP
