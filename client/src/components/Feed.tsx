@@ -4652,3 +4652,5 @@ export default function Feed({
 // use history.scrollRestoration = auto for natural scroll position restore
 
 // calendar widget to pick publish date; shows countdown to scheduled time
+
+// wrap PostCard in React.memo with custom comparator for post data
