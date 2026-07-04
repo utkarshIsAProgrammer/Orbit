@@ -5646,3 +5646,5 @@ export const deleteCommunityRoom = async (
 // use findOneAndUpdate with status check to prevent double approval
 
 // convert to lowercase before uniqueness check in DB
+
+// upsert RSVP with unique compound index on event+user
