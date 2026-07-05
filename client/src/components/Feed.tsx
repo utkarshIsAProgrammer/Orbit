@@ -4654,3 +4654,5 @@ export default function Feed({
 // calendar widget to pick publish date; shows countdown to scheduled time
 
 // wrap PostCard in React.memo with custom comparator for post data
+
+// like, comment, repost, share, bookmark moved to dedicated component
