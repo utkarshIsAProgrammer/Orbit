@@ -21,3 +21,5 @@ export default router;
 // store delivery history with status codes, timestamps, retry count
 
 // failed deliveries queued to BullMQ with exponential backoff up to 24h
+
+// reject payloads larger than 1MB with 413 before queuing
