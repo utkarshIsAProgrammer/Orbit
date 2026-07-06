@@ -31,3 +31,5 @@ router.put("/preferences", protect, notificationLimiter, updateEmailPreferences)
 router.post("/digest", protect, notificationLimiter, triggerDigest);
 
 export { router as notificationRoutes };
+
+// POST /api/notifications/read-all - mark all as read with timestamp
