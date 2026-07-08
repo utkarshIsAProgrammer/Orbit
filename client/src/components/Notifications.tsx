@@ -1462,3 +1462,5 @@ export default function Notifications({
 // clamp timestamp to Date.now() if server sends a future value
 
 // trigger bell shake animation via CSS class toggle on unreadCount change
+
+// sticky top-0 z-40 on notification panel header
