@@ -36,3 +36,5 @@ export default cloudinary;
 // fire-and-forget delete with error logging; don't block response
 
 // log warning but don't fail upload if thumbnail generation fails
+
+// ImageService class with upload, transform, delete, generateThumbnail methods
