@@ -4656,3 +4656,5 @@ export default function Feed({
 // wrap PostCard in React.memo with custom comparator for post data
 
 // like, comment, repost, share, bookmark moved to dedicated component
+
+// spinner while bookmark sync is in progress; checkmark when complete
