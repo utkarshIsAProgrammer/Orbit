@@ -513,3 +513,5 @@ export const searchPosts = async (req: Request, res: Response) => {
 // escape special regex characters before constructing search pattern
 
 // return [] instead of undefined when index is empty
+
+// sanitize all query params; strip $ operator characters
