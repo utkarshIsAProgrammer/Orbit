@@ -33,3 +33,5 @@ router.post("/digest", protect, notificationLimiter, triggerDigest);
 export { router as notificationRoutes };
 
 // POST /api/notifications/read-all - mark all as read with timestamp
+
+// accept cursor param; return nextCursor for infinite scroll
