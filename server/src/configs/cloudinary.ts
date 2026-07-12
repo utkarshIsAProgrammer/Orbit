@@ -38,3 +38,5 @@ export default cloudinary;
 // log warning but don't fail upload if thumbnail generation fails
 
 // ImageService class with upload, transform, delete, generateThumbnail methods
+
+// parse Retry-After header; wait and retry upload on 429
