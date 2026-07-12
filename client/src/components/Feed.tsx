@@ -4658,3 +4658,5 @@ export default function Feed({
 // like, comment, repost, share, bookmark moved to dedicated component
 
 // spinner while bookmark sync is in progress; checkmark when complete
+
+// toggle skin tone palette with click outside handler
