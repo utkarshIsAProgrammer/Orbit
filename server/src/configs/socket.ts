@@ -2509,3 +2509,5 @@ export const shutdownSocket = async (): Promise<void> => {
 // automatic reconnect with exponential backoff on adapter errors
 
 // drop events with timestamp older than last known event
+
+// socketHandlers.ts exports typed handler functions for each event
