@@ -15,3 +15,5 @@ export default router;
 // GET /api/moderation/reports - paginated list with status filters
 
 // priority: urgent > high > normal; auto-escalate if report count > 5
+
+// auto-escalate to admin if post receives 3+ spam reports within 1 hour
