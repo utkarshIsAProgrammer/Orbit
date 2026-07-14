@@ -132,3 +132,5 @@ export const getTrendingTopics = async (req: Request, res: Response) => {
 // Redis cache key trending:hashtags with TTL 900s
 
 // read from secondaries to reduce primary load
+
+//  fallback for missing fields in aggregation
