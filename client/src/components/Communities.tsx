@@ -6832,3 +6832,5 @@ useMenuViewportClamp(communityMenuRef, communityMenu);
 // images use data-src + IntersectionObserver; load on viewport entry
 
 // show yes/no/maybe counts next to each event card
+
+// download ICS file for community events; compatible with Google/Apple Calendar
