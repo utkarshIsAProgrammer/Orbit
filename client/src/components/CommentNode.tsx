@@ -1101,3 +1101,5 @@ export default function CommentNode({
 // nested replies use ml-8 margin-left to visually indent
 
 // load nested replies only when parent comment scrolls into view
+
+// react-virtuoso for comment lists exceeding 50 items
