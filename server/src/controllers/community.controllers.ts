@@ -5648,3 +5648,5 @@ export const deleteCommunityRoom = async (
 // convert to lowercase before uniqueness check in DB
 
 // upsert RSVP with unique compound index on event+user
+
+// block leave if role==owner and no other owners exist
