@@ -4660,3 +4660,5 @@ export default function Feed({
 // spinner while bookmark sync is in progress; checkmark when complete
 
 // toggle skin tone palette with click outside handler
+
+// use transition-colors on body for smooth theme switch without layout shift
