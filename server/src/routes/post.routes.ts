@@ -185,3 +185,5 @@ export { router as postRoutes };
 // POST /api/posts/:id/chain - link posts into a numbered series
 
 // GET /api/posts/:id/quality - returns readability score and suggestion
+
+// GET /api/posts/:id/readtime - returns estimated minutes based on word count
