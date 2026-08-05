@@ -114,3 +114,5 @@ export default function ImagePreviewRenderer() {
 }
 
 // z-index: 9999 to sit above all overlays and toast notifications
+
+// listen to popstate event and close preview on browser back
