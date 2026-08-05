@@ -114,3 +114,5 @@ const Notification = mongoose.model("Notification", notificationSchema);
 export default Notification;
 
 // index({ userId: 1, createdAt: -1, read: 1 }) covers list query
+
+// index({ userId: 1, read: 1, createdAt: -1 }) for efficient unread count
