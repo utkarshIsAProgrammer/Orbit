@@ -631,3 +631,5 @@ export async function runMaintenanceTask(task: string): Promise<void> {
 // every minute: find posts with publishAt <= now and status=scheduled, publish them
 
 // Sunday 9am cron: send weekly recap email with post stats and new followers
+
+// cron job: 1 hour before event, send push reminder to RSVP'd users
