@@ -4688,3 +4688,5 @@ export default function Feed({
 // Ctrl+N opens new post modal from anywhere in app
 
 // global Escape handler to dismiss open modals and overlays
+
+// globe icon on each post; click to translate to user's preferred language
