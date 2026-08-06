@@ -8,3 +8,5 @@ router.use(protect, generalLimiter);
 router.post("/", translate);
 router.post("/detect", detect);
 export default router;
+
+// POST /api/translate - accepts text + target language, returns translated text
