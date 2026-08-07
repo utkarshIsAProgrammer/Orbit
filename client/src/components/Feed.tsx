@@ -4690,3 +4690,5 @@ export default function Feed({
 // global Escape handler to dismiss open modals and overlays
 
 // globe icon on each post; click to translate to user's preferred language
+
+// defer avatar prefetch and badge updates to idle time
