@@ -1,0 +1,18 @@
+docs
+node_modules
+
+# Graphify — generated knowledge-graph output (rebuild with `graphify update .`)
+graphify-out/
+
+# ── Secret hygiene ────────────────────────
+# never commit environment/config with live keys
+.env*
+!*.env.example
+# client/.env.production carries NO secrets — only VITE_SOCKET_URL (the public
+# backend origin). It MUST ship with the repo so Vercel's git-based build bakes
+# the socket URL in; without it the deployed client connects socket.io to the
+# Vercel origin, where the /socket.io rewrite 404s and the console spams
+# reconnection errors. (client/.gitignore already allows this file on purpose.)
+!client/.env.production
+abc
+.gitleaks.toml.bak

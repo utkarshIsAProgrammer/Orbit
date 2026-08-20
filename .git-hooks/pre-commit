@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# ─────────────────────────────────────────────────────────────────────────────
+# ORBIT secret-scan pre-commit hook
+#
+# Lightweight, dependency-free guard: blocks commits that add files whose
+# content looks like a live secret (the `abc` incident). For a stronger net,
+# install gitleaks (https://github.com/gitleaks/gitleaks) and swap the body
+# of this script for `gitleaks protect --staged`.
+#
+# Install:  ln -s ../../.git-hooks/pre-commit .git/hooks/pre-commit
+#           (or copy this file into .git/hooks/pre-commit and chmod +x)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Patterns that must NEVER appear in committed source/config files.
+# Intentionally matches the Google OAuth/API-key shapes that bit us, plus
+# generic high-entropy-looking key assignments. False positives are possible
+# on demo strings like "YOUR_KEY_HERE" — the patterns below require a
+# plausible secret value, not a placeholder.
+SECRET_PATTERNS=(
+  'GOCSPX-[A-Za-z0-9_-]{10,}'                 # Google OAuth client secret
+  'xkeysib-[A-Za-z0-9_-]{30,}'                # Brevo / Sendinblue SMTP+API key
+  'xsmtpsib-[A-Za-z0-9_-]{30,}'               # Brevo SMTP key
+  'sk_live_[A-Za-z0-9]{20,}'                  # Stripe-style live key
+  'AKIA[0-9A-Z]{16}'                          # AWS access key id
+  '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' # private keys
+  'AKfycb[0-9A-Za-z_-]{10,}'                  # Google Apps Script style
+)
+
+# Files that are allowed to carry secrets (never committed anyway, but be safe)
+SKIP_FILES=(
+  '\.env$'
+  '\.env\.[a-zA-Z0-9_.-]+$'
+  'abc$'
+)
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)"
+
+if [ -z "$staged_files" ]; then
+  exit 0
+fi
+
+violations=0
+
+while IFS= read -r file; do
+  [ -z "$file" ] && continue
+  [ -f "$file" ] || continue
+
+  skip=0
+  for pat in "${SKIP_FILES[@]}"; do
+    if [[ "$file" =~ $pat ]]; then
+      skip=1
+      break
+    fi
+  done
+  [ "$skip" -eq 1 ] && continue
+
+  content="$(git show ":$file" 2>/dev/null)"
+  for pat in "${SECRET_PATTERNS[@]}"; do
+    if echo "$content" | grep -qE -- "$pat"; then
+      echo "❌ SECRET DETECTED in staged file: $file"
+      echo "   matched pattern: $pat"
+      echo "   Remove the secret (use env vars / a gitignored .env) and try again."
+      violations=$((violations + 1))
+    fi
+  done
+done <<< "$staged_files"
+
+if [ "$violations" -gt 0 ]; then
+  echo "⛔ Commit blocked: $violations potential secret(s) found."
+  exit 1
+fi
+
+exit 0
