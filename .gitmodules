@@ -1,0 +1,9 @@
+[submodule "client"]
+	path = client
+	url = https://github.com/utkarshIsAProgrammer/orbit-client-live.git
+[submodule "server"]
+	path = server
+	url = https://github.com/utkarshIsAProgrammer/orbit-server-live.git
+[submodule "landingpage"]
+	path = landingpage
+	url = https://github.com/utkarshIsAProgrammer/orbit-waitlist.git

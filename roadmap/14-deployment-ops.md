@@ -34,6 +34,20 @@
   (a past `CREDENTIALS.md` with live secrets was removed; rotate anything that
   ever touched a committed file).
 
+### Free-tier env vars (Render + Upstash + Vercel)
+
+| Variable | Value | Why |
+|---|---|---|
+| `ENABLE_BULLMQ` | `false` | Disables BullMQ workers — saves ~50K Redis commands/day from idle polling. All callers fall back to node-cron / inline execution. |
+| `CLUSTER_ENABLED` | `false` (optional) | Disables Node cluster — single process on free tier (1 CPU). |
+| `SOCKET_REDIS_ADAPTER` | `false` (default) | Socket.IO uses in-memory adapter — no Redis pub/sub traffic. |
+| `PUBLIC_API_URL` | your Render URL | Keep-alive pinger prevents Render free from sleeping. |
+
+**When `ENABLE_BULLMQ=false`:** scheduled posts use 1-min cron poll, emails
+send inline, notifications/gamification run on the request path, cache
+invalidation uses in-memory SCAN. All features work — just slightly higher
+request latency (~200ms) on mutation paths.
+
 ## 3. Clustering & the boot sequence
 
 `server.ts`:
@@ -102,6 +116,8 @@ requests enqueue during teardown; not closing workers at all caused the
 | Check queue health | Search Render logs for `BullMQ: ... failed` (a queue dashboard is a known gap) |
 | Inspect the DB | `npx tsx scripts/inventory-db.ts` |
 | Fix drifted counters | `scripts/inspect-follows.ts` → `repair-follow-counts.ts` → `clear-follow-caches.ts` |
+| Enable BullMQ (upgraded plan) | Set `ENABLE_BULLMQ=true` + `REDIS_URL` in Render env |
+| Check Redis usage | Upstash dashboard → Usage tab; should be <5K commands/day on free tier |
 
 ## 8. Known gaps (be honest about these)
 
@@ -115,6 +131,9 @@ requests enqueue during teardown; not closing workers at all caused the
   gracefully, but the Web tab can be sparse.
 - **Bot farm runs in production** — simulated users interacting with real ones;
   a trust decision, config-gated.
+- **In-memory caches lose state on restart** — the route-level cacheMiddleware
+  and generalLimiter use in-memory stores. Fine for single-instance free tier;
+  would need Redis backing for multi-instance deployments.
 
 ---
 

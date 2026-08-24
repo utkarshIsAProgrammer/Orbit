@@ -1,0 +1,19 @@
+# Force GitHub linguist to detect TypeScript as the primary language.
+# The main repo tracks markdown docs + submodule references, but the
+# actual codebase (client/, server/) is TypeScript. Without this,
+# GitHub classifies the repo as "Shell" or "Markdown".
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
+*.js linguist-detectable=true
+*.jsx linguist-detectable=true
+
+# Mark submodule directories as part of the language stats
+client/** linguist-detectable=true
+server/** linguist-detectable=true
+landingpage/** linguist-detectable=true
+
+# Exclude non-code files from language detection
+*.md linguist-detectable=false
+.graphify_version linguist-detectable=false
+SKILL.md linguist-detectable=false
+references/* linguist-detectable=false

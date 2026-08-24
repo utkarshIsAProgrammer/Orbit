@@ -24,14 +24,19 @@ to both CacheStorage + Dexie → register in the 30s SWR refresh timer.
 
 `apiCache.ts`:
 
-- `addToRefreshSchedule(url)` registers an endpoint; the **30s interval** checks
-  each entry's TTL (pattern-based: conversations 30s, posts 60s, communities
-  90s, default 120s).
+- `addToRefreshSchedule(url)` registers an endpoint; the **5-minute interval** checks
+  each entry's TTL (pattern-based: conversations 2m, posts/notifications/communities
+  5m, default 5m).
 - Expired → background `refreshCache(url)` → updates the store → dispatches a
   custom event → React re-renders with fresh data.
 - The timer **skips work when the tab is hidden** (`document.hidden`) — no
   battery/bandwidth waste in background tabs.
 - On logout, `stopCacheRefreshTimer()` halts everything.
+
+> **Free-tier optimization (2026):** The interval was reduced from 30s to 5m to
+> cut Render bandwidth by ~90%. WebSocket pushes handle all realtime updates
+> (messages, notifications, presence), so the SWR timer is only a safety net
+> for missed events.
 
 ## 3. Invalidation — the hardest part, done twice
 
@@ -79,6 +84,17 @@ that post row (keeping the rest of the offline feed); collection-level → clear
   `clearChatCache`, `clearFollowCache`, `clearSavesCache`, … — controllers call
   these on every mutation.
 
+> **Route-level `cacheMiddleware`:** Originally used Redis directly for every
+> GET response (2 Redis commands per request on 14 routes). Replaced with
+> **in-memory caching** (`getMemCache`/`setMemCache` from `chatCache.ts`) to
+> eliminate Redis round-trips. The in-memory cache is per-process and clears
+> on restart, which is fine for single-instance free-tier deployments.
+
+> **General rate limiter:** `generalLimiter` was replaced with an in-memory
+> sliding-window counter (`generalWindows` Map) to eliminate 1 Redis command
+> per API request. Stricter route-level limiters (auth, OTP, upload) still
+> use Redis for their security-critical Lua scripts.
+
 ## 5. The ranked-feed cache (a case study)
 
 `feedService.ts`:
@@ -125,6 +141,11 @@ CacheStorage + Dexie layers do the caching *and can be evicted*.
 - **DB-side perf** (see 04): compound indexes for every sort, `lean()` on hot
   reads, denormalized counters, 90-day TTL on interactions, `autoIndex: false`
   in prod, pool = 50.
+
+> **Free-tier resource budget (2026):** After disabling BullMQ, the remaining
+> Redis usage is ~2–5K commands/day: auth cache lookups, cache invalidation
+> SCAN loops, and event logging (1 RPUSH per event, trimmed every 10 writes).
+> Render bandwidth stays under ~0.5 GB/day with the 5m SWR interval.
 
 ---
 

@@ -72,7 +72,7 @@ when the socket reconnects, the message is lost unless the client reloads.
 Solution (server `socket.ts` + client `App.tsx`):
 
 1. Every **user-scoped** event is appended to a Redis list
-   `rt:events:<userId>` (2h TTL, capped 200): `{ts, event, payload}`.
+   `rt:events:<userId>` (2h TTL, capped 50): `{ts, event, payload}`.
 2. On every (re)connect the client emits `events:sync { since }` — the ts of
    the last event it processed, persisted in localStorage (`orbit:rt-since`).
 3. The server replays everything newer **through the same socket events**, so
@@ -85,6 +85,12 @@ Client side (`App.tsx`): `socket.onAny((event, payload) => …)` funnels every
 event into `applyRealtimeEvent` (`utils/realtimeSync.ts`), which upserts the
 entity into Dexie and evicts affected CacheStorage URLs — **realtime data
 survives reloads** because it's written into the same stores reads use.
+
+> **Free-tier optimization (2026):** The event log was optimized from 3 Redis
+> commands per event (RPUSH + LTRIM + EXPIRE) down to **1 command** (RPUSH
+> only). LTRIM + EXPIRE are batched every 10th write via a module-level
+> counter. The list cap was reduced from 200 → 50 entries per user. These
+> changes save ~66% of Redis calls from event logging.
 
 ## 6. Call signaling (WebRTC over the socket)
 

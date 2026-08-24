@@ -4,6 +4,12 @@
 > enqueued to a **BullMQ queue** (Redis-backed) and a worker executes it. Ten
 > queues cover everything from exact-time scheduled posts to Cloudinary media
 > cleanup. The entire implementation lives in `server/src/configs/queue.ts`.
+>
+> **Free-tier gate:** BullMQ is disabled by default (`ENABLE_BULLMQ=false`).
+> When disabled, all enqueue helpers return `false` and callers fall back to
+> their inline implementations (node-cron / direct send). This saves ~50K
+> Redis commands/day from idle BRPOPLPUSH polling. Set `ENABLE_BULLMQ=true`
+> and provide `REDIS_URL` to re-enable.
 
 ---
 
@@ -34,6 +40,12 @@
 for a single fast write); payloads are JSON-only (no Mongo docs or buffers —
 uploads stay inline); anything whose result the response needs can't be queued.
 
+> **Free-tier warning:** BullMQ workers poll Redis every few milliseconds
+> (`BRPOPLPUSH`), burning ~50K commands/day even when idle. On Upstash free
+> tier (10K commands/day), this alone exhausts the quota. Always set
+> `ENABLE_BULLMQ=false` on free tiers and let the inline fallbacks handle
+> the work.
+
 ## 2. The ten queues (`QueueName` enum)
 
 | Queue (Redis name) | Job | What the worker does |
@@ -57,7 +69,7 @@ uploads stay inline); anything whose result the response needs can't be queued.
 ```ts
 // 1. Enum name + lazy singleton
 const getGamificationQueue = (): Queue | null => {
-  if (!isAvailable()) return null;            // no REDIS_URL → disabled
+  if (!isAvailable()) return null;            // ENABLE_BULLMQ=false or no REDIS_URL → disabled
   if (!gamificationQueue) gamificationQueue = new Queue(QueueName.GAMIFICATION, { connection });
   return gamificationQueue;
 };
@@ -88,9 +100,10 @@ export async function awardXP(...) {
 }
 ```
 
-**Why it matters:** the app NEVER depends on Redis. No `REDIS_URL` → identical
-behavior, just slower. That's how tests run (no Redis in CI) and how the app
-works on a fresh Render instance.
+**Why it matters:** the app NEVER depends on Redis. No `REDIS_URL` or
+`ENABLE_BULLMQ=false` → identical behavior, just slower (inline execution).
+That's how tests run (no Redis in CI), how the app works on a fresh Render
+instance, and how it stays free-tier-safe.
 
 ## 4. `startQueueWorkers()` — one worker per queue
 
