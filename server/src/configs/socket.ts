@@ -560,30 +560,39 @@ const pruneStaleCommunityCalls = () => {
 let redisPubClient: Redis | null = null;
 let redisSubClient: Redis | null = null;
 
-// Track connection attempts for rate limiting using Redis for distributed systems
-const checkConnectionRateLimit = async (ip: string): Promise<boolean> => {
+// Track connection attempts for rate limiting — in-memory to save Redis commands.
+// Per-instance state is fine on a single free-tier instance.
+const socketRateWindows = new Map<string, number[]>();
+const SOCKET_RATE_WINDOW_MS = 60_000;
+const SOCKET_RATE_MAX = 60; // 60/min — mobile browsers reconnect often
+
+const checkConnectionRateLimit = (ip: string): boolean => {
   try {
-    const key = `socket:ratelimit:${ip}`;
-    const current = await redis.get(key);
-    const count = current && typeof current === 'string' ? parseInt(current, 10) : 0;
-    // 60/min: mobile browsers background/kill WebSockets constantly and
-    // reconnect — 30/min was tripping real users on flaky connections.
-    const MAX_CONNECTIONS_PER_MINUTE = 60;
-    
-    if (count >= MAX_CONNECTIONS_PER_MINUTE) {
+    const now = Date.now();
+    const windowStart = now - SOCKET_RATE_WINDOW_MS;
+    const hits = (socketRateWindows.get(ip) || []).filter(
+      (t) => t > windowStart,
+    );
+
+    if (hits.length >= SOCKET_RATE_MAX) {
       return false;
     }
-    
-    if (count === 0) {
-      await redis.set(key, "1", { ex: 60 });
-    } else {
-      await redis.incr(key);
+
+    hits.push(now);
+    socketRateWindows.set(ip, hits);
+
+    // Bound memory: drop IPs idle for > 2 minutes
+    if (socketRateWindows.size > 5_000) {
+      const expireAt = now - SOCKET_RATE_WINDOW_MS * 2;
+      for (const [key, arr] of socketRateWindows) {
+        if ((arr[arr.length - 1] ?? 0) < expireAt) {
+          socketRateWindows.delete(key);
+        }
+      }
     }
-    
+
     return true;
-  } catch (error) {
-    // Fallback to allow connection if Redis fails
-    logger.warn("Redis rate limiting failed, allowing connection", { error, ip });
+  } catch {
     return true;
   }
 };
@@ -718,7 +727,7 @@ export const initSocket = async (server: http.Server) => {
     });
     
     // Rate limit connections using Redis
-    const allowed = await checkConnectionRateLimit(clientIp);
+    const allowed = checkConnectionRateLimit(clientIp);
     if (!allowed) {
       logger.warn("Socket connection rate limited", { ip: clientIp });
       return next(new Error("Too many connection attempts. Please try again later."));
