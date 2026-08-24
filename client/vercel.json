@@ -1,0 +1,44 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://orbit-5hkm.onrender.com/api/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://orbit-5hkm.onrender.com/socket.io/:path*"
+    },
+    {
+      "source": "/socket.io/",
+      "destination": "https://orbit-5hkm.onrender.com/socket.io/"
+    },
+    {
+      "source": "/socket.io",
+      "destination": "https://orbit-5hkm.onrender.com/socket.io"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/registerSW.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    }
+  ]
+}

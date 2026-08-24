@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" class="dark" data-theme="xlite" style="background-color: #09090b;">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#09090b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ORBIT" />
+  <meta name="description"
+    content="A modern social platform for your inner circle — share, chat, and stay connected." />
+  <meta name="application-name" content="ORBIT" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Media (posts, avatars, glances) is served from Cloudinary — preconnect
+       so image requests skip DNS/TLS round-trips and render faster. -->
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <!-- Google Fonts is a render-blocking stylesheet: the browser waits for it
+       before first paint. Load it async (swap in after load) so the app's
+       JS/CSS paint immediately — text briefly uses the system fallback, then
+       swaps to Manrope/Cormorant. The app already sets a dark bg inline, so
+       there's no white flash while fonts arrive. -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=Great+Vibes&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=Great+Vibes&display=swap"
+      rel="stylesheet">
+  </noscript>
+  <title>ORBIT | Your Inner Circle</title>
+</head>
+
+<body style="background-color: #09090b;">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

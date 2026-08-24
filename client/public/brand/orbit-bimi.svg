@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny" viewBox="0 0 128 128">
+  <!-- ORBIT brand mark — Eclipse black background, white planet, gold
+       First-Orbit ring, teal Genesis satellite. Flat solid shapes only,
+       per the BIMI spec (SVG Tiny 1.2, no gradients, no text, no filters). -->
+  <rect width="128" height="128" fill="#09090B"/>
+  <circle cx="64" cy="64" r="24" fill="#F5F5F5"/>
+  <ellipse cx="64" cy="64" rx="46" ry="19" fill="none" stroke="#E3C16F" stroke-width="5" transform="rotate(-22 64 64)"/>
+  <circle cx="104" cy="31" r="8" fill="#2DD4BF"/>
+</svg>

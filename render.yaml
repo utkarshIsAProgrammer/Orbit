@@ -1,0 +1,20 @@
+# Render Blueprint — Orbit Backend
+# Deploy server/ as a Web Service from the monorepo.
+
+services:
+  - type: web
+    name: orbit-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Add these in Render Dashboard (not here — they're secrets):
+      # MONGO_URI, JWT_SECRET, CLOUDINARY_NAME, CLOUDINARY_API_KEY,
+      # CLOUDINARY_API_SECRET, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN,
+      # ENABLE_BULLMQ=false, CLUSTER_ENABLED=false, SOCKET_REDIS_ADAPTER=false

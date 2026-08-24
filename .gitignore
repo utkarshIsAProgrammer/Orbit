@@ -1,18 +1,67 @@
-docs
-node_modules
+# ── Dependencies ──────────────────────────
+node_modules/
 
-# Graphify — generated knowledge-graph output (rebuild with `graphify update .`)
-graphify-out/
+# ── Build output ──────────────────────────
+dist/
+build/
+*.tsbuildinfo
 
-# ── Secret hygiene ────────────────────────
-# never commit environment/config with live keys
-.env*
-!*.env.example
-# client/.env.production carries NO secrets — only VITE_SOCKET_URL (the public
-# backend origin). It MUST ship with the repo so Vercel's git-based build bakes
-# the socket URL in; without it the deployed client connects socket.io to the
-# Vercel origin, where the /socket.io rewrite 404s and the console spams
-# reconnection errors. (client/.gitignore already allows this file on purpose.)
-!client/.env.production
+# ── Environment (secrets) ─────────────────
+# Server .env has secrets — always ignore
+server/.env
+server/.env.local
+server/.env.development.local
+server/.env.test.local
+server/.env.production.local
+# Client .env files (except .env.production which Vercel needs)
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+# Root .env
+.env
+.env.local
+
+# ── Logs ──────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Testing ───────────────────────────────
+coverage/
+.nyc_output/
+test-results/
+__screenshots__/
+
+# ── IDE ───────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ── Runtime data ──────────────────────────
+uploads/
+pids/
+*.pid
+*.pid.lock
+*.seed
+db.json
+
+# ── Vite / PWA ────────────────────────────
+.vite/
+dev-dist/
+
+# ── Misc ──────────────────────────────────
+.cache/
+.temp/
+.tmp/
 abc
-.gitleaks.toml.bak
+
+# ── Graphify ──────────────────────────────
+graphify-out/

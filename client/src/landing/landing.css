@@ -1,0 +1,42 @@
+/* ─── ORBIT landing page — plain-CSS pieces ─────────────────────
+   The @theme tokens + @utility definitions for the landing live in
+   src/index.css (the entry stylesheet — @tailwindcss/vite only compiles
+   them there). These are plain CSS classes that work as-is. */
+
+/* Slow-flowing warm light panel */
+.aurora-panel {
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.06) 35%,
+    rgba(255, 255, 255, 0.1) 65%,
+    rgba(255, 255, 255, 0.1)
+  );
+  background-size: 220% 220%;
+  animation: aurora-move 13s ease-in-out infinite;
+}
+
+/* Hide scrollbars on horizontal marquees */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Lab: the conversation-ring — dashes flow continuously around the circle */
+.lab-ring {
+  stroke: rgba(212, 212, 216, 0.4);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 2 16;
+  animation: lab-dash 1.4s linear infinite;
+}
+
+/* Motion scaling. The page runs at full choreography by default — the OS
+   "prefers-reduced-motion" preference is only respected when built with
+   VITE_MOTION_MODE=gentle (see landing/config.ts). */
+html[data-motion="gentle"] *,
+html[data-motion="gentle"] *::before,
+html[data-motion="gentle"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

@@ -1,0 +1,1843 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--breakpoint-sm: 614px;
+	--breakpoint-xl: 1200px;
+	/* Body & UI — a premium, highly readable geometric sans that pairs
+	   beautifully with the Cormorant Garamond headings. Manrope keeps
+	   long-form content (posts, comments, chat) crisp at small sizes. */
+	--font-sans:
+		"Manrope", "Plus Jakarta Sans", ui-sans-serif, system-ui,
+		-apple-system, "Segoe UI", sans-serif;
+	/* Cursive / elegant serif reserved for headings, labels & the logo. */
+	--font-heading:
+		"Cormorant Garamond", "Playfair Display", "Georgia",
+		ui-serif, serif;
+	--font-display: var(--font-heading);
+	--font-logo: "Great Vibes", "Cormorant Garamond", cursive;
+	--font-cursive: "Cormorant Garamond", "Playfair Display", cursive;
+	--font-ui: var(--font-sans);
+	--font-button: var(--font-sans);
+	/* Data spots (timestamps, counters, admin keys) use a clean readable
+	   mono stack instead of a proportional serif, keeping digits aligned. */
+	--font-mono:
+		ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono",
+		Menlo, Consolas, monospace;
+	--font-mono-feature: tabular-nums;
+
+	/* ─── Midnight Aurora palette — Orbit's signature color story ──────
+	   The app's entire zinc scale is re-tuned from neutral gray to a
+	   violet-tinted "midnight" ramp. Because nearly every surface, border
+	   and text color in the app is built on zinc-*, this single remap
+	   shifts the whole product from X-style monochrome to a warm cosmic
+	   indigo identity — while keeping each step's luminance in line with
+	   the original so text contrast and hierarchy stay untouched. */
+	--color-zinc-50: #f7f6fd;
+	--color-zinc-100: #efedfa;
+	--color-zinc-150: #e5e2f5;
+	--color-zinc-200: #dcd8f0;
+	--color-zinc-250: #cdc8e6;
+	--color-zinc-300: #bcb6dd;
+	--color-zinc-350: #aaa2d1;
+	--color-zinc-400: #9b93c4;
+	--color-zinc-450: #8a81b4;
+	--color-zinc-500: #756ba3;
+	--color-zinc-550: #635a90;
+	--color-zinc-600: #50487a;
+	--color-zinc-650: #413a66;
+	--color-zinc-700: #332d52;
+	--color-zinc-800: #272240;
+	--color-zinc-850: #1d1930;
+	--color-zinc-900: #141023;
+	--color-zinc-950: #0c0a19;
+	/* Muted lavender text for eyebrows & captions. */
+	--color-mist: #a79fc9;
+}
+
+/* Apply body font to all buttons */
+button {
+	font-family: var(--font-sans);
+}
+
+@layer utilities {
+
+	/* Disable selections in buttons or icons */
+	.select-none {
+		user-select: none;
+	}
+
+	/* ─── Cursive heading scale (fluid — scales smoothly between phones
+	   and large desktops instead of jumping at breakpoints). ───────── */
+	.text-display {
+		font-family: var(--font-cursive);
+		font-size: clamp(1.75rem, 4.5vw + 0.5rem, 2.75rem);
+		line-height: 1.05;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		font-variant-numeric: lining-nums;
+	}
+	.text-display-sm {
+		font-family: var(--font-cursive);
+		font-size: clamp(1.4rem, 2.6vw + 0.7rem, 2rem);
+		line-height: 1.1;
+		font-weight: 600;
+		font-variant-numeric: lining-nums;
+	}
+	.text-display-xs {
+		font-family: var(--font-cursive);
+		font-size: clamp(1.15rem, 1.8vw + 0.6rem, 1.5rem);
+		line-height: 1.15;
+		font-weight: 600;
+		font-variant-numeric: lining-nums;
+	}
+
+	/* Elegant small cursive label — used for section eyebrows / modal titles */
+	.text-label {
+		font-family: var(--font-cursive);
+		font-size: clamp(0.8rem, 1.1vw + 0.4rem, 1rem);
+		line-height: 1.2;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+	}
+	.text-label-sm {
+		font-family: var(--font-cursive);
+		font-size: 0.85rem;
+		line-height: 1.2;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+	}
+
+	/* Italic cursive accent — premium flourish for emphasized words */
+	.font-display-italic {
+		font-family: var(--font-cursive);
+		font-style: italic;
+		font-weight: 500;
+	}
+
+	/* Great Vibes script used for the wordmark/logo accents */
+	.text-logo {
+		font-family: var(--font-logo);
+		font-size: clamp(1.6rem, 3vw + 0.8rem, 2.4rem);
+		line-height: 1;
+		font-weight: 400;
+	}
+
+	/* ─── Landing-page typography & glass language (ported from the
+	   standalone landingpage/) ────────────────────────────────────── */
+	/* Pure frosted glass surface — very slight white tint + strong blur. */
+	.glass {
+		background: rgba(255, 255, 255, 0.035);
+		border: 1px solid rgba(255, 255, 255, 0.09);
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+	}
+	/* Darker glass — translucent near-black panel for floating bars. */
+	.glass-strong {
+		background: color-mix(in srgb, var(--app-bg, #09090b) 78%, transparent);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+	}
+	/* ─── Theme tokens (X Lite = default) ─────────────────────────────
+	   The color themes swap the ENTIRE palette at runtime via a
+	   data-theme attribute on <html>. X Lite is the classic monochrome
+	   (near-black neutral zinc, X-blue accents); Aurora is the cool
+	   cosmic midnight (violet → fuchsia → amber); Ember is a warm
+	   golden-hour palette (espresso browns, coral, amber, rose). Plain
+	   utilities compile to var(--color-*) so they re-tint automatically;
+	   the shared classes below carry the accent surfaces that opacity
+	   variants can't (those are inlined by the compiler, not var-based). */
+	.text-gradient-aurora {
+		/* Visible fallback (aurora lavender / ember gold) — overridden by
+		   the clipped gradient where text-fill transparency is supported,
+		   so headings never render as invisible text. */
+		color: var(--aurora-text-1);
+		background-image: linear-gradient(
+			110deg,
+			var(--aurora-text-1) 0%,
+			var(--aurora-text-2) 42%,
+			var(--aurora-text-3) 100%
+		);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+	.bg-aurora {
+		background-image: linear-gradient(
+			110deg,
+			var(--aurora-grad-1) 0%,
+			var(--aurora-grad-2) 55%,
+			var(--aurora-grad-3) 135%
+		);
+		background-clip: padding-box;
+	}
+	.shadow-aurora {
+		box-shadow: var(--aurora-glow);
+	}
+	/* Ensure rounded elements with background gradients/borders render crisp anti-aliased edges */
+	.rounded-full {
+		background-clip: padding-box;
+	}
+	/* Shared themed surface — used by GlassCard (replaces literal
+	   bg-zinc-950/95 + /35 which the compiler inlines). */
+	.glass-card-surface {
+		background-color: color-mix(in srgb, var(--app-bg) 96%, transparent);
+	}
+	@media (min-width: 640px) {
+		.glass-card-surface {
+			background-color: color-mix(in srgb, var(--app-bg) 38%, transparent);
+		}
+	}
+	/* Aurora bloom in card corners — themed radial tint. */
+	.glass-bloom {
+		background-image: linear-gradient(
+			135deg,
+			color-mix(in srgb, var(--aurora-grad-1) 16%, transparent),
+			color-mix(in srgb, var(--aurora-grad-2) 5%, transparent)
+		);
+	}
+	/* Themed active pill — nav tabs, segments, chips. Deliberately
+	   translucent: it's a tint over the dark glass UI, not a solid chip —
+	   the ambient gradient shows through so it reads as part of the app's
+	   dark & transparent theme (sidebar + dock selection). */
+	.pill-active {
+		background-image: linear-gradient(
+			110deg,
+			color-mix(in srgb, var(--aurora-grad-1) 13%, transparent),
+			color-mix(in srgb, var(--aurora-grad-2) 6%, transparent)
+		);
+		border: 1px solid color-mix(in srgb, var(--aurora-grad-1) 16%, transparent);
+		color: #fff;
+		-webkit-backdrop-filter: blur(10px);
+		backdrop-filter: blur(10px);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.07),
+			0 8px 24px -10px var(--aurora-glow-soft);
+	}
+	/* Themed dock shell — the mobile bottom bar. */
+	.dock-shell {
+		background-color: color-mix(in srgb, var(--app-bg) 42%, transparent);
+		border: 1px solid color-mix(in srgb, var(--aurora-grad-1) 22%, transparent);
+	}
+	/* Cormorant display headline — the app's elegant serif voice. */
+	.headline {
+		font-family: var(--font-heading);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		line-height: 1.02;
+		font-variant-numeric: lining-nums;
+	}
+	/* Elegant serif eyebrow label (section headers / small caps moments). */
+	.eyebrow {
+		font-family: var(--font-heading);
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		color: var(--color-mist, #a1a1aa);
+	}
+	/* Great Vibes script accent — the app's logo/wordmark font. */
+	.script {
+		font-family: var(--font-logo);
+		font-weight: 400;
+	}
+	/* Outlined display text — premium hollow-letter moments. */
+	.text-outline {
+		-webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+		color: transparent;
+	}
+	/* Hairline dividers — the landing page's delicate 8% white borders. */
+	.hairline-t {
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+	}
+	.hairline-b {
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+}
+
+/* ─── Color Themes — X Lite (default), Aurora & Ember ──────────
+   Everything theme-dependent lives behind CSS variables on :root. A
+   data-theme attribute on <html> swaps the whole palette at runtime:
+   - X Lite: pure black & white — near-black neutral zinc, white CTAs
+     with black text, no accent color (the app's first theme).
+   - Aurora: cool cosmic midnight — violet-midnight zinc, violet→
+     fuchsia→amber gradients.
+   - Ember: warm golden-hour — espresso browns, coral→rose→amber
+     gradients, a completely different mood. */
+html[data-theme="aurora"] {
+	--app-bg: #0c0a19;
+	/* Aurora accent gradient (violet → fuchsia → amber) — deepened
+	   to the 600s so CTAs read rich/dark instead of light-pink. */
+	--aurora-grad-1: #7c3aed;
+	--aurora-grad-2: #c026d3;
+	--aurora-grad-3: #d97706;
+	/* Readable gradient-text stops */
+	--aurora-text-1: #a78bfa;
+	--aurora-text-2: #e879f9;
+	--aurora-text-3: #fbbf24;
+	/* CTA glow + soft pill glow */
+	--aurora-glow:
+		0 12px 34px -10px rgba(124, 58, 237, 0.5),
+		0 4px 14px -6px rgba(192, 38, 211, 0.32);
+	--aurora-glow-soft: rgba(124, 58, 237, 0.42);
+	/* Static ambient background (behind every glass surface) */
+	--ambient-bg:
+		radial-gradient(1100px 620px at 12% -6%, rgba(139, 92, 246, 0.17), transparent 62%),
+		radial-gradient(950px 520px at 90% 6%, rgba(217, 70, 239, 0.11), transparent 58%),
+		radial-gradient(1000px 680px at 50% 112%, rgba(251, 191, 36, 0.07), transparent 60%),
+		radial-gradient(700px 500px at 96% 88%, rgba(99, 102, 241, 0.13), transparent 55%);
+	--ambient-bg-mobile:
+		radial-gradient(330px 190px at 12% -6%, rgba(139, 92, 246, 0.17), transparent 62%),
+		radial-gradient(285px 155px at 90% 6%, rgba(217, 70, 239, 0.11), transparent 58%),
+		radial-gradient(300px 205px at 50% 112%, rgba(251, 191, 36, 0.07), transparent 60%),
+		radial-gradient(210px 150px at 96% 88%, rgba(99, 102, 241, 0.13), transparent 55%);
+	/* Focus ring + selection */
+	--focus-ring: rgba(167, 139, 250, 0.75);
+	--selection-bg: rgba(139, 92, 246, 0.32);
+
+	/* Violet-midnight zinc ramp — Aurora's signature scale. (Moved here
+	   from :root so X Lite can own the default neutral ramp.) */
+	--color-zinc-50: #f7f6fd;
+	--color-zinc-100: #efedfa;
+	--color-zinc-150: #e5e2f5;
+	--color-zinc-200: #dcd8f0;
+	--color-zinc-250: #cdc8e6;
+	--color-zinc-300: #bcb6dd;
+	--color-zinc-350: #aaa2d1;
+	--color-zinc-400: #9b93c4;
+	--color-zinc-450: #8a81b4;
+	--color-zinc-500: #756ba3;
+	--color-zinc-550: #635a90;
+	--color-zinc-600: #50487a;
+	--color-zinc-650: #413a66;
+	--color-zinc-700: #332d52;
+	--color-zinc-800: #272240;
+	--color-zinc-850: #1d1930;
+	--color-zinc-900: #141023;
+	--color-zinc-950: #0c0a19;
+	--color-mist: #a79fc9;
+}
+
+html[data-theme="genesis"] {
+	/* Aurum — the landing page's warm black & gold. The internal key stays
+	   "genesis" so the Day One perk unlock + persisted orbit_color_theme
+	   values keep working; only the palette is replaced. (X Lite's neutral
+	   zinc ramp at :root is inherited — the landing page is pure
+	   monochrome + gold.) */
+	--app-bg: #09090b;
+	/* Gold accent gradient (champagne → gold → muted bronze) — the
+	   landing page's signature warm accent. */
+	--aurora-grad-1: #d4af37;
+	--aurora-grad-2: #e3c16f;
+	--aurora-grad-3: #b7a272;
+	/* Readable gradient-text stops */
+	--aurora-text-1: #f7e6bb;
+	--aurora-text-2: #d4af37;
+	--aurora-text-3: #b7a272;
+	/* CTA glow + soft pill glow — warm gold */
+	--aurora-glow:
+		0 12px 34px -10px rgba(212, 175, 55, 0.5),
+		0 4px 14px -6px rgba(227, 193, 111, 0.32);
+	--aurora-glow-soft: rgba(212, 175, 55, 0.42);
+	/* Static ambient background — warm gold glows on near-black. */
+	--ambient-bg:
+		radial-gradient(1100px 620px at 12% -6%, rgba(212, 175, 55, 0.14), transparent 62%),
+		radial-gradient(950px 520px at 90% 6%, rgba(227, 193, 111, 0.09), transparent 58%),
+		radial-gradient(1000px 680px at 50% 112%, rgba(183, 162, 114, 0.07), transparent 60%),
+		radial-gradient(700px 500px at 96% 88%, rgba(212, 175, 55, 0.1), transparent 55%);
+	--ambient-bg-mobile:
+		radial-gradient(330px 190px at 12% -6%, rgba(212, 175, 55, 0.14), transparent 62%),
+		radial-gradient(285px 155px at 90% 6%, rgba(227, 193, 111, 0.09), transparent 58%),
+		radial-gradient(300px 205px at 50% 112%, rgba(183, 162, 114, 0.07), transparent 60%),
+		radial-gradient(210px 150px at 96% 88%, rgba(212, 175, 55, 0.1), transparent 55%);
+	/* Focus ring + selection — gold */
+	--focus-ring: rgba(212, 175, 55, 0.75);
+	--selection-bg: rgba(212, 175, 55, 0.3);
+}
+/* Gold CTAs carry black text — gold #d4af37 vs white fails contrast
+   (~1.9:1), vs black it's ~8:1. Same treatment X Lite gives its white
+   buttons; matches the landing page's black-on-gold warmth. */
+html[data-theme="genesis"] .bg-aurora {
+	color: #09090b !important;
+}
+
+/* --- X Lite -- pure black & white (the app's first theme) ---
+   The original look the app shipped: near-black neutral zinc with NO
+   accent color. White CTAs carry black text, active pills are light
+   grey with black text, chips and badges are pure monochrome. */
+:root,
+html[data-theme="xlite"] {
+	--app-bg: #09090b;
+	/* White → silver → grey accent gradient (pure monochrome). */
+	--aurora-grad-1: #fafafa;
+	--aurora-grad-2: #e4e4e7;
+	--aurora-grad-3: #b6b6c0;
+	/* Readable gradient-text stops */
+	--aurora-text-1: #ffffff;
+	--aurora-text-2: #e4e4e7;
+	--aurora-text-3: #a1a1aa;
+	/* CTA glow + soft pill glow — soft white */
+	--aurora-glow:
+		0 12px 34px -10px rgba(255, 255, 255, 0.35),
+		0 4px 14px -6px rgba(255, 255, 255, 0.18);
+	--aurora-glow-soft: rgba(255, 255, 255, 0.22);
+	/* Subtle white ambient glows on near-black */
+	--ambient-bg:
+		radial-gradient(1100px 620px at 12% -6%, rgba(255, 255, 255, 0.1), transparent 62%),
+		radial-gradient(950px 520px at 90% 6%, rgba(255, 255, 255, 0.06), transparent 58%),
+		radial-gradient(1000px 680px at 50% 112%, rgba(255, 255, 255, 0.05), transparent 60%),
+		radial-gradient(700px 500px at 96% 88%, rgba(255, 255, 255, 0.08), transparent 55%);
+	--ambient-bg-mobile:
+		radial-gradient(330px 190px at 12% -6%, rgba(255, 255, 255, 0.1), transparent 62%),
+		radial-gradient(285px 155px at 90% 6%, rgba(255, 255, 255, 0.06), transparent 58%),
+		radial-gradient(300px 205px at 50% 112%, rgba(255, 255, 255, 0.05), transparent 60%),
+		radial-gradient(210px 150px at 96% 88%, rgba(255, 255, 255, 0.08), transparent 55%);
+	/* Focus ring + selection */
+	--focus-ring: rgba(255, 255, 255, 0.6);
+	--selection-bg: rgba(255, 255, 255, 0.22);
+
+	/* Neutral zinc ramp - the original monochrome scale. */
+	--color-zinc-50: #fafafa;
+	--color-zinc-100: #f4f4f5;
+	--color-zinc-150: #ececf0;
+	--color-zinc-200: #e4e4e7;
+	--color-zinc-250: #dcdce0;
+	--color-zinc-300: #d4d4d8;
+	--color-zinc-350: #bbbbc1;
+	--color-zinc-400: #a1a1aa;
+	--color-zinc-450: #898a92;
+	--color-zinc-500: #71717a;
+	--color-zinc-550: #61616a;
+	--color-zinc-600: #52525b;
+	--color-zinc-650: #4a4a52;
+	--color-zinc-700: #3f3f46;
+	--color-zinc-800: #27272a;
+	--color-zinc-850: #1f1f23;
+	--color-zinc-900: #18181b;
+	--color-zinc-950: #09090b;
+
+	/* violet-/fuchsia- utilities remapped to neutral greys so every
+	   secondary chip, badge and gradient stays pure black & white. */
+	--color-violet-50: #fafafa;
+	--color-violet-100: #f4f4f5;
+	--color-violet-200: #e4e4e7;
+	--color-violet-300: #d4d4d8;
+	--color-violet-400: #a1a1aa;
+	--color-violet-500: #71717a;
+	--color-violet-600: #52525b;
+	--color-violet-700: #3f3f46;
+	--color-violet-800: #27272a;
+	--color-violet-900: #18181b;
+	--color-violet-950: #0c0c0f;
+	--color-fuchsia-50: #fafafa;
+	--color-fuchsia-100: #f0f0f2;
+	--color-fuchsia-200: #e0e0e3;
+	--color-fuchsia-300: #c9c9cf;
+	--color-fuchsia-400: #a1a1aa;
+	--color-fuchsia-500: #7c7c86;
+	--color-fuchsia-600: #5b5b64;
+	--color-fuchsia-700: #41414a;
+	--color-fuchsia-800: #2a2a30;
+	--color-fuchsia-900: #1c1c21;
+	--color-fuchsia-950: #0e0e11;
+	/* sky-/blue- utilities remapped to greys too — mention flairs, flair
+	   perk chips, file-type icons and badges stay monochrome. */
+	--color-sky-50: #fafafa;
+	--color-sky-100: #f4f4f5;
+	--color-sky-200: #e4e4e7;
+	--color-sky-300: #d4d4d8;
+	--color-sky-400: #a1a1aa;
+	--color-sky-500: #71717a;
+	--color-sky-600: #52525b;
+	--color-sky-700: #3f3f46;
+	--color-sky-800: #27272a;
+	--color-sky-900: #18181b;
+	--color-sky-950: #0c0c0f;
+	--color-blue-50: #fafafa;
+	--color-blue-100: #f4f4f5;
+	--color-blue-200: #e4e4e7;
+	--color-blue-300: #d4d4d8;
+	--color-blue-400: #a1a1aa;
+	--color-blue-500: #71717a;
+	--color-blue-600: #52525b;
+	--color-blue-700: #3f3f46;
+	--color-blue-800: #27272a;
+	--color-blue-900: #18181b;
+	--color-blue-950: #0c0c0f;
+	--color-mist: #a1a1aa;
+}
+
+/* ─── ORBIT landing — waitlist design language ─────────────────────
+   The app's logged-out landing is the SAME page as the standalone
+   waitlist landing. These @theme tokens + @utility definitions must live
+   in the ENTRY stylesheet: @tailwindcss/vite only compiles @theme/@utility
+   here, not in component-imported css. Plain classes (.btn:hover, .aurora-
+   panel, .lab-ring…) stay in src/landing/landing.css. */
+@theme {
+  /* App palette accents (Midnight Aurora family) — lavender/violet/fuchsia
+     like the app's signature theme. */
+  --color-amber: #ffffff;
+  --color-rose: #e4e4e7;
+  --color-violet: #b6b6c0;
+  --color-void: #000000;
+  --color-panel: #18181b;
+  --color-ink: #fafafa;
+  --color-dim: #71717a;
+
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-pulse-soft: pulse-soft 3.4s ease-in-out infinite;
+  --animate-heart: heart-beat 2.2s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 0.28; }
+    50% { opacity: 0.9; }
+  }
+  @keyframes heart-beat {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    55% { transform: scale(0.96); }
+  }
+  @keyframes sheen {
+    0% { background-position: 120% 0; }
+    55%, 100% { background-position: -120% 0; }
+  }
+  @keyframes aurora-move {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes lab-dash {
+    to { stroke-dashoffset: -36; }
+  }
+}
+@utility u-label {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--color-mist);
+  font-variant-numeric: lining-nums;
+}
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  padding: 0.95rem 1.9rem;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+@utility btn-primary {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 12px 40px -10px rgba(255, 255, 255, 0.45);
+}
+@utility btn-ghost {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fafafa;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+@utility halo {
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 42%, transparent 68%);
+}
+@utility sheen-text {
+  background: linear-gradient(110deg, #b6b6c0 20%, #ffffff 40%, #b6b6c0 60%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sheen 5s ease-in-out infinite;
+}
+@utility text-gradient-warm {
+  background: linear-gradient(100deg, #ffffff 0%, #e4e4e7 48%, #fafafa 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility noise-layer {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+@utility vignette {
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.6) 100%);
+}
+@utility nav-menu-glass {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.06) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(10, 10, 13, 0.92) 0%, rgba(7, 7, 9, 0.88) 100%);
+  backdrop-filter: blur(28px) saturate(1.25);
+  -webkit-backdrop-filter: blur(28px) saturate(1.25);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary:hover { box-shadow: 0 18px 64px -12px rgba(255, 255, 255, 0.5); }
+.btn-ghost:hover { border-color: rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.08); }
+
+/* Pure monochrome contrast — white CTAs and light pills need black text.
+   Strictly scoped to html[data-theme=xlite] so Aurora/Ember keep their
+   white-on-gradient text. Higher specificity than the shared utilities. */
+html[data-theme="xlite"] .bg-aurora {
+	/* !important so any hover:text-white combo can never turn text
+	   invisible on the white gradient (e.g. GlanceEditor edit badge). */
+	color: #09090b !important;
+}
+html[data-theme="xlite"] .pill-active {
+	background-image: linear-gradient(
+		110deg,
+		color-mix(in srgb, #fafafa 12%, transparent),
+		color-mix(in srgb, #d4d4d8 6%, transparent)
+	);
+	border: 1px solid color-mix(in srgb, #fafafa 14%, transparent);
+	color: #fafafa;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.06),
+		0 8px 24px -10px rgba(255, 255, 255, 0.12);
+}
+/* Sub-labels inherit the light text on the translucent pill. */
+html[data-theme="xlite"] .pill-active span,
+html[data-theme="xlite"] .pill-active p {
+	color: #fafafa;
+}
+
+
+/* X Lite-scoped opacity re-tint -- mirrors the ember block but
+   resolves against the neutral xlite vars. */
+html[data-theme="xlite"] .bg-zinc-100\/60 { background-color: color-mix(in srgb, var(--color-zinc-100) 60%, transparent); }
+html[data-theme="xlite"] .bg-zinc-400\/50 { background-color: color-mix(in srgb, var(--color-zinc-400) 50%, transparent); }
+html[data-theme="xlite"] .bg-zinc-700\/20 { background-color: color-mix(in srgb, var(--color-zinc-700) 20%, transparent); }
+html[data-theme="xlite"] .bg-zinc-700\/50 { background-color: color-mix(in srgb, var(--color-zinc-700) 50%, transparent); }
+html[data-theme="xlite"] .bg-zinc-700\/70 { background-color: color-mix(in srgb, var(--color-zinc-700) 70%, transparent); }
+html[data-theme="xlite"] .bg-zinc-700\/90 { background-color: color-mix(in srgb, var(--color-zinc-700) 90%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/10 { background-color: color-mix(in srgb, var(--color-zinc-800) 10%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/20 { background-color: color-mix(in srgb, var(--color-zinc-800) 20%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/30 { background-color: color-mix(in srgb, var(--color-zinc-800) 30%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/40 { background-color: color-mix(in srgb, var(--color-zinc-800) 40%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/50 { background-color: color-mix(in srgb, var(--color-zinc-800) 50%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/60 { background-color: color-mix(in srgb, var(--color-zinc-800) 60%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/70 { background-color: color-mix(in srgb, var(--color-zinc-800) 70%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/80 { background-color: color-mix(in srgb, var(--color-zinc-800) 80%, transparent); }
+html[data-theme="xlite"] .bg-zinc-800\/90 { background-color: color-mix(in srgb, var(--color-zinc-800) 90%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/15 { background-color: color-mix(in srgb, var(--color-zinc-900) 15%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/20 { background-color: color-mix(in srgb, var(--color-zinc-900) 20%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/25 { background-color: color-mix(in srgb, var(--color-zinc-900) 25%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/30 { background-color: color-mix(in srgb, var(--color-zinc-900) 30%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/40 { background-color: color-mix(in srgb, var(--color-zinc-900) 40%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/50 { background-color: color-mix(in srgb, var(--color-zinc-900) 50%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/55 { background-color: color-mix(in srgb, var(--color-zinc-900) 55%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/60 { background-color: color-mix(in srgb, var(--color-zinc-900) 60%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/70 { background-color: color-mix(in srgb, var(--color-zinc-900) 70%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/80 { background-color: color-mix(in srgb, var(--color-zinc-900) 80%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/90 { background-color: color-mix(in srgb, var(--color-zinc-900) 90%, transparent); }
+html[data-theme="xlite"] .bg-zinc-900\/95 { background-color: color-mix(in srgb, var(--color-zinc-900) 95%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/10 { background-color: color-mix(in srgb, var(--color-zinc-950) 10%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/20 { background-color: color-mix(in srgb, var(--color-zinc-950) 20%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/25 { background-color: color-mix(in srgb, var(--color-zinc-950) 25%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/30 { background-color: color-mix(in srgb, var(--color-zinc-950) 30%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/35 { background-color: color-mix(in srgb, var(--color-zinc-950) 35%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/40 { background-color: color-mix(in srgb, var(--color-zinc-950) 40%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/50 { background-color: color-mix(in srgb, var(--color-zinc-950) 50%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/55 { background-color: color-mix(in srgb, var(--color-zinc-950) 55%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/60 { background-color: color-mix(in srgb, var(--color-zinc-950) 60%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/70 { background-color: color-mix(in srgb, var(--color-zinc-950) 70%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/80 { background-color: color-mix(in srgb, var(--color-zinc-950) 80%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/90 { background-color: color-mix(in srgb, var(--color-zinc-950) 90%, transparent); }
+html[data-theme="xlite"] .bg-zinc-950\/95 { background-color: color-mix(in srgb, var(--color-zinc-950) 95%, transparent); }
+html[data-theme="xlite"] .border-zinc-200\/10 { border-color: color-mix(in srgb, var(--color-zinc-200) 10%, transparent); }
+html[data-theme="xlite"] .border-zinc-500\/25 { border-color: color-mix(in srgb, var(--color-zinc-500) 25%, transparent); }
+html[data-theme="xlite"] .border-zinc-500\/40 { border-color: color-mix(in srgb, var(--color-zinc-500) 40%, transparent); }
+html[data-theme="xlite"] .border-zinc-600\/50 { border-color: color-mix(in srgb, var(--color-zinc-600) 50%, transparent); }
+html[data-theme="xlite"] .border-zinc-600\/60 { border-color: color-mix(in srgb, var(--color-zinc-600) 60%, transparent); }
+html[data-theme="xlite"] .border-zinc-700\/30 { border-color: color-mix(in srgb, var(--color-zinc-700) 30%, transparent); }
+html[data-theme="xlite"] .border-zinc-700\/40 { border-color: color-mix(in srgb, var(--color-zinc-700) 40%, transparent); }
+html[data-theme="xlite"] .border-zinc-700\/50 { border-color: color-mix(in srgb, var(--color-zinc-700) 50%, transparent); }
+html[data-theme="xlite"] .border-zinc-700\/60 { border-color: color-mix(in srgb, var(--color-zinc-700) 60%, transparent); }
+html[data-theme="xlite"] .border-zinc-700\/70 { border-color: color-mix(in srgb, var(--color-zinc-700) 70%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/20 { border-color: color-mix(in srgb, var(--color-zinc-800) 20%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/30 { border-color: color-mix(in srgb, var(--color-zinc-800) 30%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/40 { border-color: color-mix(in srgb, var(--color-zinc-800) 40%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/50 { border-color: color-mix(in srgb, var(--color-zinc-800) 50%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/60 { border-color: color-mix(in srgb, var(--color-zinc-800) 60%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/70 { border-color: color-mix(in srgb, var(--color-zinc-800) 70%, transparent); }
+html[data-theme="xlite"] .border-zinc-800\/80 { border-color: color-mix(in srgb, var(--color-zinc-800) 80%, transparent); }
+html[data-theme="xlite"] .from-zinc-800\/90 { --tw-gradient-from: color-mix(in srgb, var(--color-zinc-800) 90%, transparent); }
+html[data-theme="xlite"] .text-zinc-500\/40 { color: color-mix(in srgb, var(--color-zinc-500) 40%, transparent); }
+html[data-theme="xlite"] .text-zinc-500\/50 { color: color-mix(in srgb, var(--color-zinc-500) 50%, transparent); }
+html[data-theme="xlite"] .to-zinc-900\/95 { --tw-gradient-to: color-mix(in srgb, var(--color-zinc-900) 95%, transparent); }
+html[data-theme="xlite"] .via-zinc-950\/10 { --tw-gradient-via: color-mix(in srgb, var(--color-zinc-950) 10%, transparent); }
+html[data-theme="xlite"] .bg-violet-500\/15 { background-color: color-mix(in srgb, var(--color-violet-500) 15%, transparent); }
+html[data-theme="xlite"] .bg-violet-500\/20 { background-color: color-mix(in srgb, var(--color-violet-500) 20%, transparent); }
+html[data-theme="xlite"] .bg-violet-500\/25 { background-color: color-mix(in srgb, var(--color-violet-500) 25%, transparent); }
+html[data-theme="xlite"] .bg-violet-500\/30 { background-color: color-mix(in srgb, var(--color-violet-500) 30%, transparent); }
+html[data-theme="xlite"] .bg-violet-600\/30 { background-color: color-mix(in srgb, var(--color-violet-600) 30%, transparent); }
+html[data-theme="xlite"] .bg-violet-950\/20 { background-color: color-mix(in srgb, var(--color-violet-950) 20%, transparent); }
+html[data-theme="xlite"] .border-violet-300\/30 { border-color: color-mix(in srgb, var(--color-violet-300) 30%, transparent); }
+html[data-theme="xlite"] .border-violet-400\/30 { border-color: color-mix(in srgb, var(--color-violet-400) 30%, transparent); }
+html[data-theme="xlite"] .border-violet-400\/40 { border-color: color-mix(in srgb, var(--color-violet-400) 40%, transparent); }
+html[data-theme="xlite"] .border-violet-400\/50 { border-color: color-mix(in srgb, var(--color-violet-400) 50%, transparent); }
+html[data-theme="xlite"] .border-violet-500\/20 { border-color: color-mix(in srgb, var(--color-violet-500) 20%, transparent); }
+html[data-theme="xlite"] .border-violet-500\/25 { border-color: color-mix(in srgb, var(--color-violet-500) 25%, transparent); }
+html[data-theme="xlite"] .border-violet-500\/30 { border-color: color-mix(in srgb, var(--color-violet-500) 30%, transparent); }
+html[data-theme="xlite"] .border-violet-900\/30 { border-color: color-mix(in srgb, var(--color-violet-900) 30%, transparent); }
+html[data-theme="xlite"] .from-violet-400\/60 { --tw-gradient-from: color-mix(in srgb, var(--color-violet-400) 60%, transparent); }
+html[data-theme="xlite"] .text-violet-300\/80 { color: color-mix(in srgb, var(--color-violet-300) 80%, transparent); }
+html[data-theme="xlite"] .via-fuchsia-300\/40 { --tw-gradient-via: color-mix(in srgb, var(--color-fuchsia-300) 40%, transparent); }
+
+
+/* ─── Ember — warm golden-hour theme ───────────────────────────── */
+html[data-theme="ember"] {
+	--app-bg: #141008;
+	--aurora-grad-1: #fb923c;
+	--aurora-grad-2: #f43f5e;
+	--aurora-grad-3: #f59e0b;
+	--aurora-text-1: #fdba74;
+	--aurora-text-2: #fda4af;
+	--aurora-text-3: #fcd34d;
+	--aurora-glow:
+		0 12px 34px -10px rgba(244, 63, 94, 0.5),
+		0 4px 14px -6px rgba(249, 115, 22, 0.35);
+	--aurora-glow-soft: rgba(249, 115, 22, 0.45);
+	--ambient-bg:
+		radial-gradient(1100px 620px at 12% -6%, rgba(251, 146, 60, 0.17), transparent 62%),
+		radial-gradient(950px 520px at 90% 6%, rgba(244, 63, 94, 0.11), transparent 58%),
+		radial-gradient(1000px 680px at 50% 112%, rgba(251, 191, 36, 0.08), transparent 60%),
+		radial-gradient(700px 500px at 96% 88%, rgba(217, 119, 6, 0.13), transparent 55%);
+	--ambient-bg-mobile:
+		radial-gradient(330px 190px at 12% -6%, rgba(251, 146, 60, 0.17), transparent 62%),
+		radial-gradient(285px 155px at 90% 6%, rgba(244, 63, 94, 0.11), transparent 58%),
+		radial-gradient(300px 205px at 50% 112%, rgba(251, 191, 36, 0.08), transparent 60%),
+		radial-gradient(210px 150px at 96% 88%, rgba(217, 119, 6, 0.13), transparent 55%);
+	--focus-ring: rgba(251, 146, 60, 0.75);
+	--selection-bg: rgba(244, 63, 94, 0.32);
+
+	/* Warm espresso zinc ramp — replaces the violet-midnight scale. */
+	--color-zinc-50: #faf6ee;
+	--color-zinc-100: #f4eee1;
+	--color-zinc-150: #ece4d1;
+	--color-zinc-200: #e0d5bb;
+	--color-zinc-250: #d2c3a4;
+	--color-zinc-300: #c0ad8a;
+	--color-zinc-350: #a99672;
+	--color-zinc-400: #94805e;
+	--color-zinc-450: #7d6a4b;
+	--color-zinc-500: #6a563a;
+	--color-zinc-550: #54452c;
+	--color-zinc-600: #40341f;
+	--color-zinc-650: #302618;
+	--color-zinc-700: #241c11;
+	--color-zinc-800: #1b150c;
+	--color-zinc-850: #151006;
+	--color-zinc-900: #100c04;
+	--color-zinc-950: #0c0903;
+
+	/* Warm coral (violet→) + rose (fuchsia→) remaps so secondary
+	   chips and badges follow the ember mood instead of staying violet. */
+	--color-violet-50: #fdf3ee;
+	--color-violet-100: #fbe5db;
+	--color-violet-200: #f7c9b8;
+	--color-violet-300: #f1a887;
+	--color-violet-400: #e9855d;
+	--color-violet-500: #dc6a3d;
+	--color-violet-600: #c2522b;
+	--color-violet-700: #9e3f21;
+	--color-violet-800: #7a2f1a;
+	--color-violet-900: #562212;
+	--color-violet-950: #38150a;
+	--color-fuchsia-50: #fdf1f2;
+	--color-fuchsia-100: #fbe0e3;
+	--color-fuchsia-200: #f5c2c9;
+	--color-fuchsia-300: #ec9aa6;
+	--color-fuchsia-400: #e07284;
+	--color-fuchsia-500: #cf5267;
+	--color-fuchsia-600: #b23a50;
+	--color-fuchsia-700: #8e2c40;
+	--color-fuchsia-800: #6a2131;
+	--color-fuchsia-900: #471620;
+	--color-fuchsia-950: #2b0d13;
+	--color-mist: #c0ad8a;
+}
+
+/* Ember-scoped opacity re-tint — opacity variants like
+   bg-zinc-800/60 are INLINED by the compiler, so they need
+   explicit overrides to follow the ember ramp. Using
+   color-mix + the ember --color-zinc-* vars keeps them in sync. */
+html[data-theme="ember"] .bg-zinc-100\/60 { background-color: color-mix(in srgb, var(--color-zinc-100) 60%, transparent); }
+html[data-theme="ember"] .bg-zinc-400\/50 { background-color: color-mix(in srgb, var(--color-zinc-400) 50%, transparent); }
+html[data-theme="ember"] .bg-zinc-700\/20 { background-color: color-mix(in srgb, var(--color-zinc-700) 20%, transparent); }
+html[data-theme="ember"] .bg-zinc-700\/50 { background-color: color-mix(in srgb, var(--color-zinc-700) 50%, transparent); }
+html[data-theme="ember"] .bg-zinc-700\/70 { background-color: color-mix(in srgb, var(--color-zinc-700) 70%, transparent); }
+html[data-theme="ember"] .bg-zinc-700\/90 { background-color: color-mix(in srgb, var(--color-zinc-700) 90%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/10 { background-color: color-mix(in srgb, var(--color-zinc-800) 10%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/20 { background-color: color-mix(in srgb, var(--color-zinc-800) 20%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/30 { background-color: color-mix(in srgb, var(--color-zinc-800) 30%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/40 { background-color: color-mix(in srgb, var(--color-zinc-800) 40%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/50 { background-color: color-mix(in srgb, var(--color-zinc-800) 50%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/60 { background-color: color-mix(in srgb, var(--color-zinc-800) 60%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/70 { background-color: color-mix(in srgb, var(--color-zinc-800) 70%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/80 { background-color: color-mix(in srgb, var(--color-zinc-800) 80%, transparent); }
+html[data-theme="ember"] .bg-zinc-800\/90 { background-color: color-mix(in srgb, var(--color-zinc-800) 90%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/15 { background-color: color-mix(in srgb, var(--color-zinc-900) 15%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/20 { background-color: color-mix(in srgb, var(--color-zinc-900) 20%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/25 { background-color: color-mix(in srgb, var(--color-zinc-900) 25%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/30 { background-color: color-mix(in srgb, var(--color-zinc-900) 30%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/40 { background-color: color-mix(in srgb, var(--color-zinc-900) 40%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/50 { background-color: color-mix(in srgb, var(--color-zinc-900) 50%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/55 { background-color: color-mix(in srgb, var(--color-zinc-900) 55%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/60 { background-color: color-mix(in srgb, var(--color-zinc-900) 60%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/70 { background-color: color-mix(in srgb, var(--color-zinc-900) 70%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/80 { background-color: color-mix(in srgb, var(--color-zinc-900) 80%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/90 { background-color: color-mix(in srgb, var(--color-zinc-900) 90%, transparent); }
+html[data-theme="ember"] .bg-zinc-900\/95 { background-color: color-mix(in srgb, var(--color-zinc-900) 95%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/10 { background-color: color-mix(in srgb, var(--color-zinc-950) 10%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/20 { background-color: color-mix(in srgb, var(--color-zinc-950) 20%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/25 { background-color: color-mix(in srgb, var(--color-zinc-950) 25%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/30 { background-color: color-mix(in srgb, var(--color-zinc-950) 30%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/35 { background-color: color-mix(in srgb, var(--color-zinc-950) 35%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/40 { background-color: color-mix(in srgb, var(--color-zinc-950) 40%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/50 { background-color: color-mix(in srgb, var(--color-zinc-950) 50%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/55 { background-color: color-mix(in srgb, var(--color-zinc-950) 55%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/60 { background-color: color-mix(in srgb, var(--color-zinc-950) 60%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/70 { background-color: color-mix(in srgb, var(--color-zinc-950) 70%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/80 { background-color: color-mix(in srgb, var(--color-zinc-950) 80%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/90 { background-color: color-mix(in srgb, var(--color-zinc-950) 90%, transparent); }
+html[data-theme="ember"] .bg-zinc-950\/95 { background-color: color-mix(in srgb, var(--color-zinc-950) 95%, transparent); }
+html[data-theme="ember"] .border-zinc-200\/10 { border-color: color-mix(in srgb, var(--color-zinc-200) 10%, transparent); }
+html[data-theme="ember"] .border-zinc-500\/25 { border-color: color-mix(in srgb, var(--color-zinc-500) 25%, transparent); }
+html[data-theme="ember"] .border-zinc-500\/40 { border-color: color-mix(in srgb, var(--color-zinc-500) 40%, transparent); }
+html[data-theme="ember"] .border-zinc-600\/50 { border-color: color-mix(in srgb, var(--color-zinc-600) 50%, transparent); }
+html[data-theme="ember"] .border-zinc-600\/60 { border-color: color-mix(in srgb, var(--color-zinc-600) 60%, transparent); }
+html[data-theme="ember"] .border-zinc-700\/30 { border-color: color-mix(in srgb, var(--color-zinc-700) 30%, transparent); }
+html[data-theme="ember"] .border-zinc-700\/40 { border-color: color-mix(in srgb, var(--color-zinc-700) 40%, transparent); }
+html[data-theme="ember"] .border-zinc-700\/50 { border-color: color-mix(in srgb, var(--color-zinc-700) 50%, transparent); }
+html[data-theme="ember"] .border-zinc-700\/60 { border-color: color-mix(in srgb, var(--color-zinc-700) 60%, transparent); }
+html[data-theme="ember"] .border-zinc-700\/70 { border-color: color-mix(in srgb, var(--color-zinc-700) 70%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/20 { border-color: color-mix(in srgb, var(--color-zinc-800) 20%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/30 { border-color: color-mix(in srgb, var(--color-zinc-800) 30%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/40 { border-color: color-mix(in srgb, var(--color-zinc-800) 40%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/50 { border-color: color-mix(in srgb, var(--color-zinc-800) 50%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/60 { border-color: color-mix(in srgb, var(--color-zinc-800) 60%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/70 { border-color: color-mix(in srgb, var(--color-zinc-800) 70%, transparent); }
+html[data-theme="ember"] .border-zinc-800\/80 { border-color: color-mix(in srgb, var(--color-zinc-800) 80%, transparent); }
+html[data-theme="ember"] .from-zinc-800\/90 { --tw-gradient-from: color-mix(in srgb, var(--color-zinc-800) 90%, transparent); }
+html[data-theme="ember"] .text-zinc-500\/40 { color: color-mix(in srgb, var(--color-zinc-500) 40%, transparent); }
+html[data-theme="ember"] .text-zinc-500\/50 { color: color-mix(in srgb, var(--color-zinc-500) 50%, transparent); }
+html[data-theme="ember"] .to-zinc-900\/95 { --tw-gradient-to: color-mix(in srgb, var(--color-zinc-900) 95%, transparent); }
+html[data-theme="ember"] .via-zinc-950\/10 { --tw-gradient-via: color-mix(in srgb, var(--color-zinc-950) 10%, transparent); }
+
+
+/* ─── Design Tokens ────────────────────────────────────────────── */
+:root {
+	--app-height: 100dvh;
+	--safe-area-bottom: env(safe-area-inset-bottom, 0px);
+	--dock-offset: 6.25rem;
+
+	/* Z-index scale */
+	--z-base: 0;
+	--z-content: 10;
+	--z-dock: 120;
+	--z-alert: 140;
+	--z-toast: 160;
+	--z-modal: 300;
+
+	/* Border radius scale */
+	--radius-sm: 0.5rem;      /* 8px  — small chips, badges */
+	--radius-md: 0.75rem;     /* 12px — medium surfaces */
+	--radius-lg: 1rem;        /* 16px — cards */
+	--radius-xl: 1.25rem;     /* 20px — large cards */
+	--radius-2xl: 1.5rem;     /* 24px — dialogs, modals */
+	--radius-full: 9999px;    /* pills, inputs */
+
+	/* Shadow depth scale */
+	--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+	--shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+	--shadow-xl: 0 20px 60px -15px rgba(0, 0, 0, 0.5);
+	--shadow-glow: 0 0 20px rgba(255, 255, 255, 0.05);
+
+	/* Transition defaults */
+	--transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Cross-browser backdrop-filter support (Tailwind v4 doesn't auto-prefix) ─── */
+[class*="backdrop-blur"] {
+	-webkit-backdrop-filter: var(--tw-backdrop-blur);
+}
+
+/* Fallback for browsers that don't support backdrop-filter at all */
+@supports not (backdrop-filter: blur(1px)) {
+	[class*="backdrop-blur"] {
+		background-color: color-mix(in srgb, var(--app-bg, #09090b) 97%, transparent) !important;
+	}
+}
+
+/* ─── Hide scrollbars globally ────────────────────────────────── */
+/* Scrollbars hidden everywhere while keeping scroll functionality */
+*::-webkit-scrollbar {
+	display: none;
+}
+
+* {
+	scrollbar-width: none;
+}
+
+/* ─── Auto-growing textareas (WhatsApp-style) ────────────────── */
+/* Every multi-line input auto-grows with its content (via the
+   useAutoGrow hook) up to a max height, then scrolls internally.
+   The scrollbar stays fully hidden so the rounded corners are never
+   squared off and the box always looks clean. */	textarea::-webkit-scrollbar {
+		display: none;
+	}
+
+textarea {
+	scrollbar-width: none;
+	scrollbar-color: transparent transparent;
+}
+
+/* Pinned-message / reply jump highlight — a quick scale POP on the bubble
+   itself, with no outline, ring or glow. The bubble briefly swells and settles
+   so the jump target is obvious, while the avatar column, reactions and other
+   row furniture stay completely untouched. */
+@keyframes msgPinnedPop {
+	0% {
+		transform: scale(1);
+	}
+	35% {
+		transform: scale(1.07);
+	}
+	70% {
+		transform: scale(0.98);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+.msg-pinned-highlight {
+	animation: msgPinnedPop 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html {
+	background-color: var(--app-bg, #0c0a19);
+	color: #000000;
+	overflow-x: clip;
+	min-height: 100%;
+	transition:
+		color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+		background-color 0.5s ease;
+}
+
+html.dark {
+	background-color: var(--app-bg, #0c0a19);
+	color: #ffffff;
+}	/* Landing page's global heading rhythm — tight tracking + snug leading
+	   make Cormorant headlines feel premium and composed. */
+	h1, h2, h3, h4 {
+		letter-spacing: -0.01em;
+		line-height: 1.08;
+	}
+
+	body {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: var(--app-bg, #0c0a19);
+	min-height: var(--app-height);
+	overflow-x: hidden;
+	overscroll-behavior: none;
+	/* Manrope has a comfortable x-height at 400 — keep body text light and
+	   airy while headings carry the weight. A whisper of tracking keeps it
+	   premium without hurting readability. */
+	font-weight: 400;
+	letter-spacing: 0;
+	/* Keep digits aligned in counters/timestamps even with a
+	   proportional face (no jitter while counts tick up). */
+	font-variant-numeric: tabular-nums;
+}
+
+/* Manrope has a comfortable x-height (like the original Inter body), so we
+   restore the app's original base sizes — the enlarged sizes that were
+   needed for Cormorant's low x-height are no longer necessary. */
+@media (max-width: 1023px) {
+	html {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 639px) {
+	html {
+		font-size: 13.5px;
+	}
+}
+
+/* ─── Default input styling ────────────────────────────────────── */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+	border-radius: var(--radius-full);
+}
+
+/* Custom autofill styles to prevent browser ugly backgrounds and text colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+	-webkit-text-fill-color: #f4f4f5 !important;
+	-webkit-box-shadow: 0 0 0px 1000px var(--color-zinc-950, #09090b) inset !important;
+	transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ─── Layout layers ────────────────────────────────────────────── */
+.mobile-shell {
+	position: relative;
+	isolation: isolate;
+	z-index: var(--z-base);
+}
+
+.app-content-layer {
+	position: relative;
+	z-index: var(--z-content);
+}
+
+.app-dock-layer {
+	z-index: var(--z-dock);
+}
+
+.app-alert-layer {
+	z-index: var(--z-alert);
+}
+
+.app-toast-layer {
+	z-index: var(--z-toast);
+}
+
+.app-modal-layer {
+	z-index: var(--z-modal);
+}
+
+/* Lightweight ambient animation for small screens, where the WebGL layers are
+   intentionally omitted to preserve battery life and scrolling performance. */
+.orbit-ambient-glare {
+	background: var(--app-bg, #0c0a19);
+	overflow: hidden;
+}
+
+.orbit-ambient-glare__orb {
+	position: absolute;
+	width: 95vw;
+	height: 95vw;
+	border-radius: 9999px;
+	filter: blur(58px);
+	opacity: 0.42;
+	will-change: transform;
+	animation: orbit-ambient-drift 11s ease-in-out infinite alternate;
+}
+
+.orbit-ambient-glare__orb--one {
+	top: -30vw;
+	left: -30vw;
+	background: radial-gradient(circle, rgba(167, 139, 250, 0.26), rgba(139, 92, 246, 0.12) 38%, transparent 70%);
+}
+
+.orbit-ambient-glare__orb--two {
+	right: -35vw;
+	bottom: -25vw;
+	background: radial-gradient(circle, rgba(217, 70, 239, 0.18), rgba(168, 85, 247, 0.1) 40%, transparent 70%);
+	animation-delay: -5s;
+	animation-direction: alternate-reverse;
+}
+
+.landing-mobile-backdrop {
+	background: radial-gradient(circle at 50% 40%, #332d52 0%, #141023 48%, #0c0a19 100%);
+}
+
+.landing-mobile-backdrop__glow {
+	position: absolute;
+	inset: -20%;
+	background: radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.2), transparent 48%);
+	filter: blur(30px);
+	animation: orbit-ambient-drift 9s ease-in-out infinite alternate;
+}
+
+.landing-mobile-globe {
+	position: absolute;
+	top: 38%;
+	left: 50%;
+	width: min(72vw, 21rem);
+	aspect-ratio: 1;
+	border: 1px solid rgba(255, 255, 255, 0.48);
+	border-radius: 50%;
+	transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-18deg);
+	box-shadow: 0 0 50px rgba(255, 255, 255, 0.16), inset 0 0 38px rgba(255, 255, 255, 0.08);
+	transform-style: preserve-3d;
+	animation: landing-globe-spin 16s linear infinite;
+}
+
+.landing-mobile-globe::before,
+.landing-mobile-globe::after,
+.landing-mobile-globe span {
+	content: "";
+	position: absolute;
+	inset: 12%;
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 50%;
+}
+
+.landing-mobile-globe::before { transform: rotateY(62deg); }
+.landing-mobile-globe::after { transform: rotateY(-62deg); }
+.landing-mobile-globe span:nth-child(1) { transform: rotateX(62deg); }
+.landing-mobile-globe span:nth-child(2) { inset: 28%; opacity: 0.7; }
+.landing-mobile-globe span:nth-child(3) { inset: 42%; opacity: 0.45; }
+
+@keyframes orbit-ambient-drift {
+	from { transform: translate3d(-4%, -3%, 0) scale(0.94); }
+	to { transform: translate3d(9%, 8%, 0) scale(1.12); }
+}
+
+@keyframes landing-globe-spin {
+	from { transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-18deg) rotateY(0deg); }
+	to { transform: translate(-50%, -50%) rotateX(64deg) rotateZ(-18deg) rotateY(360deg); }
+}
+
+/* Safe area bottom padding utility — respects device notches and home indicators.
+   Registered as a Tailwind v4 @utility so responsive variants (sm:pb-safe-bottom)
+   are actually generated instead of silently dropping to the base padding. */
+@utility pb-safe-bottom {
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html.dark body {
+	background-color: var(--app-bg, #0c0a19);
+}
+
+#root {
+	min-height: var(--app-height);
+	width: 100%;
+	position: relative;
+	isolation: isolate;
+}
+
+/* Ensure legacy and newer overlay layers render above the dock and content */
+.z-50,
+.z-\[100\],
+.z-\[200\],
+.z-\[300\],
+.z-\[310\],
+.z-\[320\],
+.z-\[340\] {
+	z-index: var(--z-modal) !important;
+}
+
+.z-40 {
+	z-index: var(--z-dock) !important;
+}
+
+/* ─── Image & video defaults ───────────────────────────────────── */
+/* MUST live inside @layer base: as unlayered CSS, `height: auto` here
+   would BEAT every Tailwind height utility (h-full, h-9, …) because
+   unlayered rules win over layered ones regardless of specificity — the
+   call-stage video and the local PiP rendered at intrinsic height and
+   only filled the TOP of their containers instead of the whole screen.
+   Inside @layer base, utilities (which come later in the layer order)
+   override these defaults normally. */
+@layer base {
+	img,
+	video {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+}
+
+img {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* ─── Responsive base ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+	body {
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	.mobile-shell,
+	.mobile-full-height {
+		min-height: var(--app-height);
+		height: var(--app-height);
+	}
+
+	/* The logged-out landing is a NORMAL scrolling document — the window
+	   (and Lenis) scrolls it, and its CTAs are anchors that scroll the
+	   window. The .mobile-shell rule above caps the shell at viewport
+	   height for the logged-in app, but applied to the landing it turns
+	   the shell into a fixed-height internal scroll container on phones:
+	   the window can't scroll, document.scrollHeight collapses to the
+	   viewport, and every anchor button ("Join Orbit", "Explore",
+	   "Create account") silently dies. Undo the cap for the landing only. */
+	.mobile-shell.landing-shell {
+		height: auto !important;
+		overflow: visible;
+	}
+
+	.mobile-safe-bottom {
+		padding-bottom: calc(var(--dock-offset) + var(--safe-area-bottom));
+	}
+
+	.mobile-safe-bottom-compact {
+		padding-bottom: calc(5.75rem + var(--safe-area-bottom));
+	}
+}
+
+/* ─── Interactive cursor defaults ──────────────────────────────── */
+button,
+[role="button"],
+a,
+select,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+[onClick],
+.cursor-pointer,
+nav div,
+.clickable-item {
+	cursor: pointer !important;
+}
+
+/* ─── Typography ───────────────────────────────────────────────── */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+}
+
+/* ─── Interactive defaults ─────────────────────────────────────── */
+
+/* Base transition on all interactive elements */
+button,
+a,
+[role="button"] {
+	transition: all var(--transition-base);
+}
+
+/* Focus states for accessibility — high-visibility focus ring for keyboard users */
+*:focus-visible {
+	outline: 3px solid rgba(96, 165, 250, 0.7);
+	outline-offset: 2px;
+}
+
+/* Improved focus ring inside dark backgrounds */
+.dark *:focus-visible {
+	outline-color: rgba(147, 197, 253, 0.8);
+}
+
+/* Smooth scrolling for better UX */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Improve glass morphism effects */
+.glass-effect {
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+}
+
+/* GPU acceleration for smooth animations without subpixel layer distortion */
+.gpu-accelerated {
+	transform: translateZ(0);
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	isolation: isolate;
+}
+
+/* Content visibility for large scrollable areas to reduce paint cost */
+.content-visibility-auto {
+	content-visibility: auto;
+	contain-intrinsic-size: 500px;
+}
+
+/* Hide native browser validation tooltips — we use custom validation */
+input:invalid,
+textarea:invalid,
+select:invalid {
+	box-shadow: none;
+}
+
+/* Remove browser default red glow on invalid inputs */
+input:focus:invalid,
+textarea:focus:invalid {
+	box-shadow: none;
+}
+
+/* Remove outline from all input fields */
+input,
+textarea,
+select {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+/* ─── Waveform animation for voice note recording indicator ────── */
+@keyframes waveform {
+	0% {
+		transform: scaleY(0.3);
+	}
+
+	100% {
+		transform: scaleY(1);
+	}
+}
+
+.waveform-bar {
+	transform-origin: bottom;
+	animation: waveform 0.5s ease-in-out infinite alternate;
+}
+
+/* ─── Fade-in animation for page content ───────────────────────── */
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-up {
+	animation: fade-in-up 0.3s ease-out;
+}
+
+/* ─── Skeleton shimmer animation ───────────────────────────────── */
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.skeleton-shimmer {
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--color-zinc-800) 45%, transparent) 25%,
+		color-mix(in srgb, var(--color-zinc-700) 70%, transparent) 50%,
+		color-mix(in srgb, var(--color-zinc-800) 45%, transparent) 75%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─── Card hover lift ──────────────────────────────────────────── */
+.card-hover-lift {
+	transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card-hover-lift:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-lg);
+}
+
+/* ─── Premium polish & stability ───────────────────────────────── */
+/* Kill the "pop-in" flash when images finish loading (layout shift /
+   blink). Images fade in over a quarter second; slow networks show a
+   neutral placeholder instead of a white gap. */
+img {
+	background-color: color-mix(in srgb, var(--color-zinc-900) 80%, #000 20%);
+}
+@keyframes orbit-img-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+img {
+	animation: orbit-img-in 0.28s ease both;
+}
+
+/* Aurora focus ring for keyboard users (accessibility) — violet blends
+   with the new midnight palette. Outline follows the element's own
+   border-radius, so rounded buttons keep their shape. */
+:focus-visible {
+	outline: 2px solid var(--focus-ring, rgba(167, 139, 250, 0.75));
+	outline-offset: 2px;
+}
+
+/* Aurora text selection — themed accent consistency. */
+::selection {
+	background: var(--selection-bg, rgba(139, 92, 246, 0.32));
+	color: #fff;
+}
+
+/* Remove the grey flash on tap for touch devices. */
+* {
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth in-page scrolling (anchor links / swipes) — disabled for
+   users who prefer reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
+/* ─── Respect reduced motion preferences ───────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* ─── Mobile Performance: Reduce animations and effects on small screens ─── */
+@media (max-width: 768px) {
+
+	/* Slow down non-essential animations but keep them if not using prefers-reduced-motion */
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.3s !important;
+		transition-duration: 0.15s !important;
+	}
+
+	/* Re-enable essential micro-animations (spinner, pulse loaders, waveform) */
+	.animate-spin,
+	.animate-pulse,
+	.waveform-bar {
+		animation-duration: 1.5s !important;
+		animation-iteration-count: infinite !important;
+	}
+
+	.orbit-ambient-glare__orb {
+		animation-duration: 11s !important;
+		animation-iteration-count: infinite !important;
+	}
+
+	.landing-mobile-backdrop__glow {
+		animation-duration: 9s !important;
+		animation-iteration-count: infinite !important;
+	}
+
+	.landing-mobile-globe {
+		animation-duration: 16s !important;
+		animation-iteration-count: infinite !important;
+	}
+
+	/* Prevent costly backdrop-blur on mobile — use solid backgrounds instead */
+	.backdrop-blur-xl,
+	.backdrop-blur-2xl,
+	.backdrop-blur-md,
+	.backdrop-blur-sm,
+	.glass-effect {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+
+	/* Simplify shadows on mobile — keep minimal depth hierarchy */
+	.shadow-2xl {
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+	}
+	.shadow-xl {
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+	}
+	.shadow-lg {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+	}
+	.shadow-md {
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+	}
+	.shadow-sm {
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+	}
+
+	/* Disable hover scale transforms on touch devices */
+	.group:hover .group-hover\:scale-105,
+	.group:hover .group-hover\:scale-110,
+	.group\/image:hover .group-hover\/image\:scale-\[1\.02\],
+	.group\/item:hover .group-hover\/item\:scale-105,
+	.hover\:scale-105:hover,
+	.hover\:scale-110:hover,
+	.hover\:scale-\[1\.02\]:hover {
+		transform: none !important;
+	}
+
+	/* Remove opacity hover effects on mobile */
+	.hover\:opacity-85:hover,
+	.hover\:opacity-90:hover,
+	.hover\:opacity-80:hover {
+		opacity: 1 !important;
+	}
+
+	/* Reduce paint cost — disable GPU layer promotions */
+	.gpu-accelerated {
+		transform: none !important;
+		will-change: auto !important;
+	}
+
+	/* Mobile chat: prevent zoom on input focus, prevent overscroll */
+	/* iOS only: prevent auto-zoom on focus */
+	@supports (-webkit-touch-callout: none) {
+		input:not([type="checkbox"]):not([type="radio"]),
+		textarea,
+		select {
+			font-size: 16px !important;
+		}
+	}
+
+	/* Chat specific mobile fixes */
+	.chat-container {
+		touch-action: pan-y pinch-zoom !important;
+		overscroll-behavior: contain !important;
+		-webkit-overflow-scrolling: touch !important;
+	}
+
+	/* Prevent layout shift when keyboard opens */
+	.chat-input-area {
+		position: sticky !important;
+		bottom: 0 !important;
+		z-index: 10 !important;
+		padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+	}
+}
+
+/* ─── Mobile: dynamic viewport height ──────────────────────────── */
+/* 100dvh excludes browser chrome (address bar, etc.) on mobile - prevents 'top part missing' issue */
+@supports (height: 100dvh) {
+	.h-screen-force {
+		height: 100dvh !important;
+	}
+}
+
+/* Fallback for browsers that don't support dvh units */
+@supports not (height: 100dvh) {
+	.h-screen-force {
+		height: 100vh !important;
+	}
+}
+
+/* iOS Safari must come LAST — overrides both 100dvh and 100vh above */
+@supports (-webkit-touch-callout: none) {
+	.h-screen-force {
+		height: -webkit-fill-available !important;
+	}
+
+	input,
+	textarea {
+		-webkit-user-select: text !important;
+		user-select: text !important;
+	}
+}
+
+/* ─── Sidebar visibility at custom 614px breakpoint ────────────── */
+/* The left sidebar is visible from 614px+ (all tablets and desktops),
+   always followed by the feed. Below 614px (mobile phones) the dock
+   (mobile nav) is shown instead. */
+@media (min-width: 614px) {
+	.sidebar-force-show {
+		display: block !important;
+	}
+	.dock-force-hide {
+		display: none !important;
+	}
+}
+
+/* ─── Sonner Toasts — sleek glass design ─────────────────────────── */
+[data-sonner-toaster] {
+	--width: min(372px, calc(100vw - 28px));
+	--gap: 12px;
+	--border-radius: 18px;
+	--toast-icon-margin-start: 0px;
+	--toast-icon-margin-end: 8px;
+	font-family: var(--font-sans);
+}
+
+/* Dark theme palette — translucent liquid-glass surfaces (monochrome) */
+[data-sonner-toaster][data-sonner-theme="dark"] {
+	--normal-bg: color-mix(in srgb, var(--app-bg) 92%, transparent);
+	--normal-border: color-mix(in srgb, var(--aurora-grad-1) 30%, transparent);
+	--normal-text: #fafafa;
+	--success-bg: color-mix(in srgb, var(--app-bg) 92%, transparent);
+	--success-border: color-mix(in srgb, var(--aurora-grad-1) 36%, transparent);
+	--success-text: #fafafa;
+	--error-bg: color-mix(in srgb, var(--app-bg) 92%, transparent);
+	--error-border: color-mix(in srgb, var(--aurora-grad-1) 36%, transparent);
+	--error-text: #fafafa;
+	--warning-bg: color-mix(in srgb, var(--app-bg) 92%, transparent);
+	--warning-border: color-mix(in srgb, var(--aurora-grad-1) 36%, transparent);
+	--warning-text: #fafafa;
+	--info-bg: color-mix(in srgb, var(--app-bg) 92%, transparent);
+	--info-border: color-mix(in srgb, var(--aurora-grad-1) 36%, transparent);
+	--info-text: #fafafa;
+}
+
+/* Toast card — glass surface with soft depth */
+[data-sonner-toaster] .orbit-toast[data-styled="true"] {
+	border-radius: var(--border-radius);
+	padding: 8px 14px;
+	gap: 8px;
+	backdrop-filter: blur(22px) saturate(150%);
+	-webkit-backdrop-filter: blur(22px) saturate(150%);
+	box-shadow:
+		0 16px 40px -16px rgba(0, 0, 0, 0.65),
+		inset 0 1px 0 rgba(255, 255, 255, 0.06);
+	transition:
+		transform 280ms cubic-bezier(0.21, 1.02, 0.73, 1),
+		opacity 180ms ease,
+		height 200ms ease,
+		box-shadow 180ms ease;
+	will-change: transform, opacity;
+}
+
+/* Perf: drop the expensive blur on small screens — the translucent
+   surface still reads as glass over the dark app background. */
+@media (max-width: 767px) {
+	[data-sonner-toaster] .orbit-toast[data-styled="true"] {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+}
+
+/* No left accent bar — clean minimal toast surface */
+
+/* Type depth — soft neutral glass glow (monochrome, no color tint) */
+[data-sonner-toaster] .orbit-toast[data-styled="true"][data-type="success"],
+[data-sonner-toaster] .orbit-toast[data-styled="true"][data-type="error"],
+[data-sonner-toaster] .orbit-toast[data-styled="true"][data-type="warning"],
+[data-sonner-toaster] .orbit-toast[data-styled="true"][data-type="info"] {
+	box-shadow:
+		0 16px 40px -16px rgba(0, 0, 0, 0.65),
+		0 0 30px -12px rgba(255, 255, 255, 0.28),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Icon chip — monochrome glass tile (same look for every toast type) */
+[data-sonner-toaster] .orbit-toast[data-styled="true"] [data-icon] {
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	background: rgba(255, 255, 255, 0.09);
+	color: #fafafa;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+/* Title + description typography */
+[data-sonner-toaster] .orbit-toast[data-styled="true"] [data-title] {
+	font-size: 13px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+}
+[data-sonner-toaster] .orbit-toast[data-styled="true"] [data-description] {
+	font-size: 11.5px;
+	line-height: 1.4;
+	color: #a1a1aa;
+}
+
+/* Close button — subtle ghost circle, fades in on hover */
+[data-sonner-toaster] .orbit-toast [data-close-button] {
+	width: 20px;
+	height: 20px;
+	border-radius: 9999px;
+	background: transparent !important;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	color: rgba(255, 255, 255, 0.55);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition:
+		opacity 200ms ease,
+		background 200ms ease,
+		color 200ms ease,
+		transform 200ms ease;
+}
+[data-sonner-toaster] .orbit-toast:hover [data-close-button],
+[data-sonner-toaster] .orbit-toast [data-close-button]:focus-visible {
+	opacity: 1;
+}
+[data-sonner-toaster] .orbit-toast [data-close-button]:hover {
+	background: rgba(255, 255, 255, 0.12) !important;
+	color: #fff;
+	transform: scale(1.1);
+}
+
+/* Touch devices have no hover — keep the dismiss button visible */
+@media (hover: none) {
+	[data-sonner-toaster] .orbit-toast [data-close-button] {
+		opacity: 1;
+	}
+}
+
+/* Action / cancel buttons */
+[data-sonner-toaster] .orbit-toast [data-button] {
+	border-radius: 9999px;
+	padding: 5px 14px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #fafafa;
+	color: #09090b;
+	box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.4);
+}
+[data-sonner-toaster] .orbit-toast [data-button]:hover {
+	background: #fff;
+}
+[data-sonner-toaster] .orbit-toast [data-cancel] {
+	border-radius: 9999px;
+	padding: 5px 14px;
+	font-size: 12px;
+	font-weight: 500;
+	background: rgba(255, 255, 255, 0.08);
+	color: #e4e4e7;
+}
+
+/* Loading spinner bars — use the accent-neutral light tone */
+[data-sonner-toaster] .orbit-toast .sonner-loading-bar {
+	background: #a1a1aa;
+}
+[data-sonner-toaster] .orbit-toast[data-promise="true"] .sonner-loading-bar {
+	background: #71717a;
+}
+
+/* ─── Scroll reveal (landing-page style) ───────────────────────── */
+/* Elements marked [data-reveal] start soft-hidden and rise in when they
+   enter the viewport (driven by hooks/useReveal.ts). Stagger each item
+   with --reveal-delay. Disabled entirely for reduced-motion users. */
+[data-reveal] {
+	opacity: 0;
+	transform: translateY(16px);
+	transition:
+		opacity 0.6s cubic-bezier(0.21, 1.02, 0.73, 1),
+		transform 0.6s cubic-bezier(0.21, 1.02, 0.73, 1);
+	transition-delay: var(--reveal-delay, 0ms);
+	will-change: opacity, transform;
+}
+
+[data-reveal].reveal-in {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-reveal] {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+}
+
+/* ─── Static ambient light — the glass foundation ─────────────── */
+/* A flat dark background makes backdrop-blur invisible. This fixed,
+   STATIC layer (midnight aurora: deep violet base + indigo/fuchsia/amber
+   glows, zero motion) sits behind the content so every translucent
+   surface — cards, dock, modals — has something soft to frost. */
+.app-ambient {
+	position: fixed;
+	inset: 0;
+	z-index: -20;
+	pointer-events: none;
+	background: var(--ambient-bg, #0c0a19);
+	/* Base color comes from the app shell; this layer is glows-only so the
+	   WebGL waves (stellar theme) show through. */
+}
+
+/* The glows above are tuned for a ~1280px desktop viewport. On phones the
+   same fixed-pixel radii span the ENTIRE screen, which makes the background
+   read as a bright washed band instead of subtle corner glows. Scale them
+   down (proportionally to the desktop design) so mobile, tablet and desktop
+   all show the same look. */
+@media (max-width: 639px) {
+	.app-ambient {
+		background: var(--ambient-bg-mobile, var(--ambient-bg, #0c0a19));
+	}
+}
+
+/* Lenis smooth scroll — instances attach the .lenis class to their own
+   scroll container element (never <html>), so the fixed h-dvh app shell
+   is untouched. This just neutralises any CSS smooth-behavior so the two
+   never fight. */
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Brand wordmark — the ORBIT logo keeps its original sans logo style and is
+   exempt from any cursive-heading rule (used by the Auth
+   ORBIT wordmark). */
+.font-orbit-logo {
+	font-family: var(--font-sans) !important;
+}
+
+/* Great Vibes script at tagline size — the landing page's elegant
+   hand-written accent for short brand moments (e.g. "use your inner
+   circle"). Big enough to stay readable. */
+.text-script {
+	font-family: var(--font-logo);
+	font-size: clamp(1.15rem, 2vw + 0.5rem, 1.55rem);
+	line-height: 1.2;
+	font-weight: 400;
+}
+
+/* Great Vibes script at SUBTITLE size — for cursive text that sits under a
+   heading (e.g. "Stay updated with your network's latest activity.").
+   Clearly smaller than the text-display heading above it (~40% of the
+   heading size) so the hierarchy reads instantly. */
+.text-script-sm {
+	font-family: var(--font-logo);
+	font-size: clamp(0.8rem, 1.2vw + 0.3rem, 1rem);
+	line-height: 1.3;
+	font-weight: 400;
+}
+
+html[data-theme="ember"] .bg-violet-500\/15 { background-color: color-mix(in srgb, var(--color-violet-500) 15%, transparent); }
+html[data-theme="ember"] .bg-violet-500\/20 { background-color: color-mix(in srgb, var(--color-violet-500) 20%, transparent); }
+html[data-theme="ember"] .bg-violet-500\/25 { background-color: color-mix(in srgb, var(--color-violet-500) 25%, transparent); }
+html[data-theme="ember"] .bg-violet-500\/30 { background-color: color-mix(in srgb, var(--color-violet-500) 30%, transparent); }
+html[data-theme="ember"] .bg-violet-600\/30 { background-color: color-mix(in srgb, var(--color-violet-600) 30%, transparent); }
+html[data-theme="ember"] .bg-violet-950\/20 { background-color: color-mix(in srgb, var(--color-violet-950) 20%, transparent); }
+html[data-theme="ember"] .border-violet-300\/30 { border-color: color-mix(in srgb, var(--color-violet-300) 30%, transparent); }
+html[data-theme="ember"] .border-violet-400\/30 { border-color: color-mix(in srgb, var(--color-violet-400) 30%, transparent); }
+html[data-theme="ember"] .border-violet-400\/40 { border-color: color-mix(in srgb, var(--color-violet-400) 40%, transparent); }
+html[data-theme="ember"] .border-violet-400\/50 { border-color: color-mix(in srgb, var(--color-violet-400) 50%, transparent); }
+html[data-theme="ember"] .border-violet-500\/20 { border-color: color-mix(in srgb, var(--color-violet-500) 20%, transparent); }
+html[data-theme="ember"] .border-violet-500\/25 { border-color: color-mix(in srgb, var(--color-violet-500) 25%, transparent); }
+html[data-theme="ember"] .border-violet-500\/30 { border-color: color-mix(in srgb, var(--color-violet-500) 30%, transparent); }
+html[data-theme="ember"] .border-violet-900\/30 { border-color: color-mix(in srgb, var(--color-violet-900) 30%, transparent); }
+html[data-theme="ember"] .from-violet-400\/60 { --tw-gradient-from: color-mix(in srgb, var(--color-violet-400) 60%, transparent); }
+html[data-theme="ember"] .text-violet-300\/80 { color: color-mix(in srgb, var(--color-violet-300) 80%, transparent); }
+html[data-theme="ember"] .via-fuchsia-300\/40 { --tw-gradient-via: color-mix(in srgb, var(--color-fuchsia-300) 40%, transparent); }

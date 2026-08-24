@@ -1,0 +1,57 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "exclude": [
+    "scripts",
+    "jest.config.ts",
+    "src/__tests__"
+  ],
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "commonjs",
+    "target": "ES2020",
+    // "types": [],
+    // For nodejs:
+    "lib": [
+      "ES2020"
+    ],
+    "types": [
+      "node"
+    ],
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": false,
+    "declarationMap": false,
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+    // Style Options
+    "noImplicitReturns": false,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    // Recommended Options
+    "strict": true,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    // ESM-only packages (@atproto/*) expose types via modern `exports`
+    // maps that the legacy node10 resolution can't follow. Map them
+    // directly to their declaration files; skipLibCheck already skips
+    // errors inside those .d.ts files. Node ≥22 can `require()` the ESM
+    // builds at runtime, so the compiled output works unchanged.
+    "baseUrl": ".",
+    "paths": {
+      "@atproto/sync": ["node_modules/@atproto/sync/dist/index.d.ts"],
+      "@atproto/identity": ["node_modules/@atproto/identity/dist/index.d.ts"]
+    }
+  }
+}
