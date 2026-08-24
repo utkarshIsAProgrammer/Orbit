@@ -6,7 +6,7 @@ import { Conversation } from "../models/conversation.model";
 import { Message } from "../models/message.model";
 import Notification from "../models/notification.model";
 import { logger } from "../utilities/logger";
-import { clearChatCache, clearByPattern } from "../configs/cache";
+import { clearChatCache, clearByPattern, deleteCache } from "../configs/cache";
 import { getIO } from "../configs/socket";
 
 /**
@@ -15,41 +15,24 @@ import { getIO } from "../configs/socket";
  * pre-block response (profile, search, feed, trending, glances, followers,
  * notifications…) can never be served to the other party. Blocking is rare,
  * so clearing broadly is the correct trade-off vs. correctness.
- */
+ */// Optimized: direct deletes + reduced SCAN loops (saves ~50 Redis cmds per block).
+// Block is rare, but SCAN loops are expensive. api: route cache has 60s TTL.
 async function clearUserVisibilityCaches(userId: string) {
-  if (!userId) return;
-  const patterns = [
-    // Route-level cacheMiddleware keys (per-viewer): api:{userId}:{path}:{query}
-    `api:${userId}:*`,
-    // Controller-level search caches are keyed per-user too
-    `search:*${userId}*`,
-    `search:${userId}*`,
-    // Follow lists
-    `followers:*${userId}*`,
-    `following:*${userId}*`,
-    // Feed / glances / trending can embed the blocked user
-    `feed:*${userId}*`,
-    `glimpses:${userId}*`,
-    `glimpses:*${userId}*`,
-    // Recommended-users suggestions cache (keyed per-viewer inside the
-    // controller: `users:suggested:{userId}:{limit}`). A stale suggestion
-    // would surface a blocked user in the sidebar / Explore even after a
-    // reload — the route-level `api:{userId}:*` clear doesn't cover it.
-    `users:suggested:${userId}*`,
-    // Browse-all users listing cache (`users:all:{userId}:{cursor}:{limit}`)
-    `users:all:${userId}*`,
-  ];
-  await Promise.all(patterns.map((p) => clearByPattern(p)));
-  // Shared content caches that embed author/blocker data (viewer-agnostic
-  // keys) — cleared globally since a block must hide the user everywhere.
-  await clearByPattern("user:username:*");
-  await clearByPattern(`user:${userId}*`);
-  await clearByPattern("search:users:*");
-  await clearByPattern("search:posts:*");
-  await clearByPattern("trending:*");
-  await clearByPattern("posts:*");
-  await clearByPattern("glimpses:*");
-  await clearByPattern("notifications:*");
+	if (!userId) return;
+	// Direct deletes for known user-specific keys
+	await Promise.all([
+		deleteCache(`user:${userId}`),
+		clearByPattern(`user:${userId}:posts:page:*`),
+		clearByPattern(`users:suggested:${userId}:*`),
+		clearByPattern(`feed:ranked:${userId}`),
+		clearByPattern(`feed:for-you:${userId}:*`),
+	]);
+	// Global content caches — only clear what a block actually affects
+	await Promise.all([
+		clearByPattern("posts:feed"),
+		clearByPattern("posts:trending"),
+		clearByPattern("trending:*"),
+	]);
 }
 
 /**

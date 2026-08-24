@@ -137,6 +137,9 @@ const ICE_SERVERS: RTCIceServer[] = buildIceServers();
 export default function App() {
     const [user, setUser] = useState<User | null>(null);
     const [sessionChecked, setSessionChecked] = useState(false);
+    // Track consecutive 401s to avoid kicking the user out on transient
+    // cold-start failures (Render free tier takes 30-60s to boot).
+    const authExpiredCountRef = useRef(0);
     const [currentTab, setTabState] = useState(() => {
         // localStorage can throw SecurityError ("The operation is insecure")
         // when the browser blocks storage (strict tracking protection /
@@ -535,29 +538,42 @@ export default function App() {
             }
         };
         const handleAuthExpired = () => {
-            setUser(null);
-            setTab("home");
-            setBadgeCount(0);
-            setChatBadgeCount(0);
-            setConversations([]);
-            setRequestedFollows({});
-            // Clear any URL-restored sub-selection so the next screen starts clean.
-            setSelectedUserUsername("");
-            setSinglePostSlug(null);
-            setAutoOpenComments(false);
-            setActiveConversationId(null);
-            setCommunityToOpen(null);
-            conversationsFetchedRef.current = false;
-            // Release any active call media/peer resources on session expiry
-            teardownActiveCall();
-            if (socketRef.current) {
-                socketRef.current.disconnect();
-                socketRef.current = null;
-            }
-            setSocket(null);
-            socketUserIdRef.current = null;
-            // Stop background cache refreshes — no point fetching auth-required data
-            stopCacheRefreshTimer();
+            // If we have no user session yet (boot / reload), a 401 is expected
+            // during backend cold start — don't kick to landing page.
+            setUser((prev) => {
+                if (!prev) return prev; // no session to expire
+                // First 401 on a logged-in user: might be a cold-start blip.
+                // Only actually expire after 3 consecutive 401s (~15s of retries).
+                authExpiredCountRef.current++;
+                if (authExpiredCountRef.current < 3) {
+                    logger.warn("auth:expired — possible cold-start blip, keeping session", {
+                        count: authExpiredCountRef.current,
+                    });
+                    return prev;
+                }
+                // Genuinely expired — clear everything.
+                authExpiredCountRef.current = 0;
+                setTab("home");
+                setBadgeCount(0);
+                setChatBadgeCount(0);
+                setConversations([]);
+                setRequestedFollows({});
+                setSelectedUserUsername("");
+                setSinglePostSlug(null);
+                setAutoOpenComments(false);
+                setActiveConversationId(null);
+                setCommunityToOpen(null);
+                conversationsFetchedRef.current = false;
+                teardownActiveCall();
+                if (socketRef.current) {
+                    socketRef.current.disconnect();
+                    socketRef.current = null;
+                }
+                setSocket(null);
+                socketUserIdRef.current = null;
+                stopCacheRefreshTimer();
+                return null;
+            });
             // NOTE: deliberately do NOT clearAllCaches() here. This handler can fire
             // on a transient failure (e.g. free-tier backend cold start), and wiping
             // CacheStorage + IndexedDB would erase all the offline-first data that
@@ -1089,9 +1105,7 @@ export default function App() {
 		} catch (err) {
 			logger.warn("Failed to fetch feature flags", err);
 		}
-	};
-
-	const checkSession = async () => {
+	};    const checkSession = async () => {
 		try {
             // Cache-first on purpose: an offline reload must still restore the
             // session from the cached user (the app is offline-first). The cache
@@ -1100,8 +1114,9 @@ export default function App() {
             // completed onboarding never serves the stale pre-onboarding flag.
             const res = await apiFetch("/api/auth/me");
             const data = await res.json();
-            if (res.ok && data.success) {
+            if (res.ok && data.success && data.user) {
                 setUser(data.user);
+                authExpiredCountRef.current = 0; // session valid — reset 401 counter
                 // Pass the JWT explicitly: the socket connects straight to the
                 // backend origin (Render) — cross-origin from the Vercel app —
                 // where the httpOnly vercel.app cookie never travels. Without
@@ -3812,7 +3827,23 @@ export default function App() {
                     </Suspense>
 
                     <AnimatePresence mode="wait">
-                        {sessionChecked && !user && !publicFeedMode ? (
+                        {!sessionChecked ? (
+                            // Session check in progress — show minimal loader
+                            // instead of flashing the landing page.
+                            <motion.div
+                                key="session-loading"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0 }}
+                                className="w-full min-h-dvh bg-zinc-950 flex items-center justify-center"
+                            >
+                                <div className="flex flex-col items-center gap-3">
+                                    <div className="h-8 w-8 border-2 border-zinc-700 border-t-zinc-300 rounded-full animate-spin" />
+                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Loading…</p>
+                                </div>
+                            </motion.div>
+                        ) : sessionChecked && !user && !publicFeedMode ? (
                             <motion.div
                                 key="logged-out-section"
                                 initial={{ opacity: 0 }}

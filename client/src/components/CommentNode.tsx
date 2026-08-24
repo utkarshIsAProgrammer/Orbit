@@ -8,7 +8,6 @@ import {
 	Edit3,
 	Check,
 	X as XIcon,
-	CornerDownLeft,
 	MoreHorizontal,
 	Share2,
 	Languages,
@@ -561,7 +560,6 @@ export default function CommentNode({
 	// Swipe-to-reply state
 	const [showSwipeBadge, setShowSwipeBadge] = useState(false);
 	const swipeBarRef = useRef<HTMLDivElement>(null);
-	const swipeBadgeRef = useRef<HTMLDivElement>(null);
 	const swipeOffsetRef = useRef(0);
 	const touchStartXRef = useRef(0);
 	const touchStartYRef = useRef(0);
@@ -730,19 +728,7 @@ export default function CommentNode({
 						"transform 180ms ease-out, opacity 180ms ease-out",
 				}}
 			/>
-			{/* Reply badge on swipe */}
-			{showSwipeBadge && (
-				<div
-					ref={swipeBadgeRef}
-					className="absolute left-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-					<div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md rounded-full px-2.5 py-1 border border-white/10">
-						<CornerDownLeft className="h-3 w-3 text-white" />
-						<span className="text-[9px] font-bold text-white uppercase tracking-wider">
-							Reply
-						</span>
-					</div>
-				</div>
-			)}
+
 			<div className="rounded-2xl border border-white/5 bg-zinc-900/15 px-3 py-2 space-y-1.5 relative backdrop-blur-md hover:border-white/10 hover:bg-zinc-900/25 transition-all duration-350">
 				{/* Delete Confirmation Overlay */}
 				{showDeleteConfirm && (

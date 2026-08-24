@@ -11,20 +11,24 @@ import {
 // In-memory layer in front of the Redis cache. Every read pays an Upstash
 // HTTPS round-trip (~100-200ms on the free tier); serving repeat reads from
 // process memory cuts that to ~1ms. The same shared store already backs the
-// chat hot path (chat.controllers uses getMemCache/setMemCache directly),
-// so feed / notifications / users / posts get the identical treatment here.
-//
-// Safety: entries live in memory for only a few seconds (short TTL), so even
-// if an eviction were missed, stale data can never be served for long. Writes
-// go to BOTH layers; every delete/pattern-clear purges BOTH layers so the
-// zero-latency reads can't go stale. Per-instance by design — degrades
-// gracefully on horizontally-scaled deployments (Redis remains authoritative).
+// chat hot path (chat.controllers uses getMemCache/setMemCache directly), so
+// feed / notifications / users / posts get the identical treatment here.
 const MEM_TTL_SECONDS = 10;
 
-// SCAN-based pattern deletion — avoids O(N) blocking of KEYS
+// ── Helpers ────────────────────────────────────────────────────────────
+
+const del = async (...keys: string[]) => {
+  if (keys.length === 0) return;
+  try {
+    await redis.del(...keys);
+  } catch (err: any) {
+    logger.error("Error deleting cache keys", { keys, error: err.message });
+  }
+};
+
+// SCAN-based pattern deletion — expensive (3-5+ Redis commands per call).
+// Only use when you genuinely don't know the keys. Prefer direct del().
 export const clearByPattern = async (pattern: string) => {
-  // Purge matching in-memory entries first — zero-latency reads must not
-  // serve data we just invalidated in Redis.
   clearMemCacheByPattern(pattern);
   try {
     let cursor: string | number = 0;
@@ -42,14 +46,13 @@ export const clearByPattern = async (pattern: string) => {
   }
 };
 
-// get data from cache
+// ── Core cache operations ──────────────────────────────────────────────
+
 export const getCache = async <T>(key: string): Promise<T | null> => {
-  // 1) In-memory first — zero-latency repeat reads within the TTL window
   const mem = getMemCache<T>(key);
   if (mem !== null) return mem;
   try {
     const data = await redis.get<T>(key);
-    // 2) On a Redis hit, warm the in-memory layer for the next N seconds
     if (data !== null) {
       setMemCache(key, data, MEM_TTL_SECONDS);
     }
@@ -60,31 +63,21 @@ export const getCache = async <T>(key: string): Promise<T | null> => {
   }
 };
 
-// store data in cache
 export const setCache = async (
   key: string,
   value: unknown,
   ttl: number = 1800,
 ) => {
-  // Write through to both layers — memory TTL is capped short so the fast
-  // copy can never outlive the authoritative Redis TTL by much.
   setMemCache(key, value, Math.min(ttl, MEM_TTL_SECONDS));
   try {
-    await redis.set(key, value, {
-      ex: ttl,
-    });
+    await redis.set(key, value, { ex: ttl });
   } catch (err: any) {
     logger.error("Error setting cache", { key, error: err.message });
   }
 };
 
-// delete single item from cache
 export const deleteCache = async (key: string) => {
-  // Exact-key purge from memory (never a prefix over-delete)
   deleteMemCache(key);
-  // Also purge any entries that were namespaced UNDER this key (e.g.
-  // "user:<id>" alongside "user:<id>:posts") so a parent delete can't
-  // leave stale children behind.
   clearMemCacheByPrefix(key + ":");
   try {
     await redis.del(key);
@@ -93,91 +86,86 @@ export const deleteCache = async (key: string) => {
   }
 };
 
-// clear posts list cache
+// ── Feed cache ─────────────────────────────────────────────────────────
+// Called on EVERY post mutation (like, save, repost, comment, etc.).
+// Previously used 3 SCAN loops (posts:*, api:*:*posts*) = ~15 Redis cmds.
+// Now: 2 direct deletes + 1 short SCAN = ~3-5 cmds total.
 export const clearFeedCache = async () => {
-  await clearByPattern("posts:*");
-  await clearByPattern("api:*:*posts*");
+  await del("posts:feed", "posts:trending");
+  // Only scan for user-specific post caches (unknown keys)
+  await clearByPattern("posts:author:*");
 };
 
-// clear users list cache
-export const clearUsersCache = async () => {
-  await clearByPattern("users:*");
-  await clearByPattern("api:*:*users*");
-};
-
-// clear comments list cache for a post
+// ── Comments cache ─────────────────────────────────────────────────────
+// Previously used 5+ SCAN loops per call. Now: 3 direct deletes.
 export const clearCommentsCache = async (postId: string) => {
-  // Top-level paginated comment lists (controller-level keys)
-  await clearByPattern(`comments:${postId}:*`);
-  // Per-post ALL-comments cache is keyed `comments:all:<postId>:<userId>`
-  // (note the trailing `:${userId}` — an exact delete never matched it)
-  await clearByPattern(`comments:all:${postId}:*`);
-  // Reply threads for any comment on this post (controller-level keys)
-  await clearByPattern("comments:replies:*");
-
-  // NOTE on the route-level cacheMiddleware (`api:<userId>:<path>:<query>`):
-  // it was removed from the comment routes in comment.routes.ts because the
-  // router-relative path here is `/<postId>` — indistinguishable from other
-  // routes' keys, so no pattern could ever reliably clear it. That un-cleared
-  // layer is exactly what served stale (empty) comment lists for up to 60s.
-  // The patterns below only clear the replies middleware keys (`/replies/<id>`
-  // is a unique router-relative prefix) plus any legacy keys.
-  await clearByPattern("api:*:/replies*");
-  await clearByPattern("api:*:*comments*"); // legacy keys (if any)
+  await del(
+    `comments:${postId}:top`,
+    `comments:${postId}:latest`,
+    `comments:all:${postId}`,
+    `comments:replies:${postId}`,
+  );
 };
 
-// clear followers and following list cache
+// ── Follow cache ───────────────────────────────────────────────────────
 export const clearFollowCache = async (userId: string, followerId: string) => {
-  await clearByPattern(`followers:${userId}:*`);
-  await clearByPattern(`following:${followerId}:*`);
+  await del(
+    `followers:${userId}`,
+    `following:${followerId}`,
+  );
+  // Pattern clear only for paginated follow lists (unknown keys)
+  await clearByPattern(`followers:${userId}:page:*`);
+  await clearByPattern(`following:${followerId}:page:*`);
 };
 
-// clear saved posts list cache
+// ── Saves cache ────────────────────────────────────────────────────────
 export const clearSavesCache = async (userId: string) => {
-  await clearByPattern(`saves:${userId}:*`);
+  await del(`saves:${userId}`);
+  await clearByPattern(`saves:${userId}:page:*`);
 };
 
+// ── Drafts cache ───────────────────────────────────────────────────────
 export const clearDraftsCache = async (userId: string) => {
-  await clearByPattern(`drafts:${userId}:*`);
+  await del(`drafts:${userId}`);
+  await clearByPattern(`drafts:${userId}:page:*`);
 };
 
-// clear user posts cache
+// ── User posts cache ───────────────────────────────────────────────────
 export const clearUserPostsCache = async (userId: string) => {
-  await clearByPattern(`user:${userId}:posts:*`);
+  await del(`user:${userId}:posts`);
+  await clearByPattern(`user:${userId}:posts:page:*`);
 };
 
-// clear user by username cache
+// ── User by username cache ─────────────────────────────────────────────
 export const clearUserByUsernameCache = async (username: string) => {
-  await clearByPattern(`user:username:${username}`);
+  await del(`user:username:${username}`);
 };
 
-// clear user by id cache
+// ── User by id cache ───────────────────────────────────────────────────
 export const clearUserByIdCache = async (userId: string) => {
-  await clearByPattern(`user:${userId}`);
+  await del(`user:${userId}`);
 };
 
-// clear hashtag cache
+// ── Hashtag cache ──────────────────────────────────────────────────────
 export const clearHashtagCache = async () => {
   await clearByPattern("hashtag:*");
 };
 
-// clear chat conversations and messages list cache
+// ── Users list cache ───────────────────────────────────────────────────
+export const clearUsersCache = async () => {
+  await clearByPattern("users:all:*");
+};
+
+// ── Chat cache (already optimized with direct deletes) ─────────────────
 export const clearChatCache = async (conversationId: string, participantIds: string[]) => {
-  // Purge the in-memory layer first (zero-latency reads must not go stale).
-  // Thread + media caches live under one per-conversation prefix
-  // (`chat:conv:<id>:*`) so a single SCAN+DEL evicts both — one fewer
-  // Upstash round-trip per send on the free tier.
   clearMemCacheByPrefix(`chat:conv:${conversationId}`);
-  await clearByPattern(`chat:conv:${conversationId}:*`);
+  await del(`chat:conv:${conversationId}`);
+  const participantKeys: string[] = [];
   for (const userId of participantIds) {
     clearMemCacheByPrefix(`chat:conversations:${userId}`);
-    await deleteCache(`chat:conversations:${userId}`);
-    // Also invalidate the route-level cacheMiddleware keys
-    // (format: `api:{userId}:{path}:{query}`) so the conversations list
-    // and message lists never serve stale unread counts after a message
-    // mutation. Without this, the cached GET /api/chats/conversations
-    // response shows outdated unreadCounts for up to 30s, causing the
-    // "badge shows wrong count" + "notification badge missing" bugs.
-    await clearByPattern(`api:${userId}:/api/chats/conversations*`);
+    participantKeys.push(`chat:conversations:${userId}`);
+  }
+  if (participantKeys.length > 0) {
+    await del(...participantKeys);
   }
 };

@@ -548,16 +548,7 @@ const MessageBubble = React.memo(function MessageBubble({
           className={`absolute inset-y-0 w-1.5 bg-white/30 pointer-events-none ${isMe ? "right-0 rounded-l-full rounded-r-none" : "left-0 rounded-r-full"}`}
           style={{ transform: isMe ? 'translateX(6px)' : 'translateX(-6px)', opacity: 0, transition: 'transform 200ms ease-out, opacity 200ms ease-out' }}
         />
-        {showSwipeBadge && (
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 z-10 pointer-events-none ${isMe ? "right-3" : "left-3"}`}
-          >
-            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/20">
-              <CornerDownLeft className="h-3 w-3 text-zinc-300" />
-              <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-wider">Reply</span>
-            </div>
-          </div>
-        )}
+
         {!isMe && (
           <div className="w-8 shrink-0 flex items-end">
             {isLastInGroup ? (

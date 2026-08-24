@@ -853,7 +853,10 @@ export default function Chat({
 	// conversation id may still be resolving (the conversations list loads
 	// async) — otherwise the parent would clear openConversationId before
 	// the auto-select below could pick it up.
-	const reportedOpenConversationRef = useRef(false);
+	//
+	// IMPORTANT: initialize from the URL so remounting (tab switch) doesn't
+	// cause a stale "not yet reported" → skip null → stuck-open loop.
+	const reportedOpenConversationRef = useRef(!!openConversationId);
 
 	// Report the open conversation id so the parent can mirror it into the
 	// URL (/chats/<id>) — drives reload persistence and shareable links.
@@ -877,8 +880,12 @@ export default function Chat({
 
 	// A fresh external navigation to a conversation id (new deep link, reload)
 	// overrides the "user closed" marker so auto-open can work again.
+	// Also clear stale markers on remount (tab switch) — the ref survives
+	// unmount but the user's intent does not.
 	useEffect(() => {
-		userClosedConvRef.current = null;
+		if (!openConversationId) {
+			userClosedConvRef.current = null;
+		}
 	}, [openConversationId]);
 
 	// Auto-select the conversation requested by the URL (e.g. a reload of
