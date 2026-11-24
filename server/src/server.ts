@@ -40,7 +40,15 @@ import translationRoutes from "./routes/translation.routes";
 import leaderboardRoutes from "./routes/leaderboard.routes";
 import { adminRoutes } from "./routes/admin.routes";
 
-import { startAffinityScheduler, startNotificationPruner, startDailyMissionReset, startKeepAlive, startStreakBreakChecker, startScheduledPostPublisher, startScheduledMessagePublisher } from "./configs/scheduler";
+import {
+  startAffinityScheduler,
+  startNotificationPruner,
+  startDailyMissionReset,
+  startKeepAlive,
+  startStreakBreakChecker,
+  startScheduledPostPublisher,
+  startScheduledMessagePublisher,
+} from "./configs/scheduler";
 import { startQueueWorkers } from "./configs/queue";
 import trendRoutes from "./routes/trending.routes";
 import { waitlistRoutes } from "./routes/waitlist.routes";
@@ -79,8 +87,13 @@ import os from "os";
 // Cluster mode: ONLY in production, NEVER in development/dev mode.
 // tsx --watch cannot fork workers (causes EPIPE crashes), and clustering
 // adds unneeded complexity for local development.
-const isClusterEnabled = process.env.NODE_ENV === "production" && process.env.CLUSTER_ENABLED !== "false";
-const numCPUs = Math.min(os.cpus().length, parseInt(process.env.CLUSTER_MAX_WORKERS || "2", 10));
+const isClusterEnabled =
+  process.env.NODE_ENV === "production" &&
+  process.env.CLUSTER_ENABLED !== "false";
+const numCPUs = Math.min(
+  os.cpus().length,
+  parseInt(process.env.CLUSTER_MAX_WORKERS || "2", 10),
+);
 
 if (isClusterEnabled && cluster.isPrimary && numCPUs > 1) {
   logger.info(`Primary process starting ${numCPUs} workers...`);
@@ -90,7 +103,9 @@ if (isClusterEnabled && cluster.isPrimary && numCPUs > 1) {
   }
 
   cluster.on("exit", (worker, code, signal) => {
-    logger.warn(`Worker ${worker.process.pid} died (code: ${code}, signal: ${signal}). Restarting...`);
+    logger.warn(
+      `Worker ${worker.process.pid} died (code: ${code}, signal: ${signal}). Restarting...`,
+    );
     cluster.fork();
   });
 
@@ -109,22 +124,22 @@ if (!cluster.isPrimary) {
 
 // ─── Global process-level error handlers ──────────────────────────
 process.on(
-	"unhandledRejection",
-	(reason: unknown, promise: Promise<unknown>) => {
-		logger.error("Unhandled Promise Rejection", {
-			error: reason instanceof Error ? reason.message : String(reason),
-			stack: reason instanceof Error ? reason.stack : undefined,
-		});
-	},
+  "unhandledRejection",
+  (reason: unknown, promise: Promise<unknown>) => {
+    logger.error("Unhandled Promise Rejection", {
+      error: reason instanceof Error ? reason.message : String(reason),
+      stack: reason instanceof Error ? reason.stack : undefined,
+    });
+  },
 );
 
 process.on("uncaughtException", (error: Error) => {
-	logger.error("Uncaught Exception", {
-		error: error.message,
-		stack: error.stack,
-	});
-	// Give logger time to flush, then exit
-	setTimeout(() => process.exit(1), 1000);
+  logger.error("Uncaught Exception", {
+    error: error.message,
+    stack: error.stack,
+  });
+  // Give logger time to flush, then exit
+  setTimeout(() => process.exit(1), 1000);
 });
 
 const env = validateEnv();
@@ -201,54 +216,54 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 app.use(
-	cors({
-		origin: (
-			origin: string | undefined,
-			callback: (err: Error | null, allow?: boolean) => void,
-		) => {
-			// Allow requests with no origin (like direct GET requests, health checks, or curl)
-			if (!origin) {
-				callback(null, true);
-				return;
-			}
+  cors({
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      // Allow requests with no origin (like direct GET requests, health checks, or curl)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
 
-			const originWithoutSlash = origin.replace(/\/$/, "");
+      const originWithoutSlash = origin.replace(/\/$/, "");
 
-			// Standalone landing page (waitlist form) — only when configured
-			if (
-				env.LANDING_PAGE_URL &&
-				originWithoutSlash === env.LANDING_PAGE_URL.replace(/\/$/, "")
-			) {
-				callback(null, true);
-				return;
-			}
+      // Standalone landing page (waitlist form) — only when configured
+      if (
+        env.LANDING_PAGE_URL &&
+        originWithoutSlash === env.LANDING_PAGE_URL.replace(/\/$/, "")
+      ) {
+        callback(null, true);
+        return;
+      }
 
-			// In development, allow any localhost origin (Vite can pick any port)
-			if (env.NODE_ENV === "development") {
-				const isLocalhost =
-					originWithoutSlash.startsWith("http://localhost:") ||
-					originWithoutSlash.startsWith("http://127.0.0.1:") ||
-					originWithoutSlash.startsWith("https://localhost:") ||
-					originWithoutSlash.startsWith("https://127.0.0.1:");
-				if (isLocalhost) {
-					callback(null, true);
-					return;
-				}
-			}
+      // In development, allow any localhost origin (Vite can pick any port)
+      if (env.NODE_ENV === "development") {
+        const isLocalhost =
+          originWithoutSlash.startsWith("http://localhost:") ||
+          originWithoutSlash.startsWith("http://127.0.0.1:") ||
+          originWithoutSlash.startsWith("https://localhost:") ||
+          originWithoutSlash.startsWith("https://127.0.0.1:");
+        if (isLocalhost) {
+          callback(null, true);
+          return;
+        }
+      }
 
-			// Also check the configured CLIENT_URL explicitly
-			if (originWithoutSlash === env.CLIENT_URL.replace(/\/$/, "")) {
-				callback(null, true);
-				return;
-			}
+      // Also check the configured CLIENT_URL explicitly
+      if (originWithoutSlash === env.CLIENT_URL.replace(/\/$/, "")) {
+        callback(null, true);
+        return;
+      }
 
-			// Log rejected origin for debugging, then deny
-			logger.warn("CORS blocked origin", { origin: originWithoutSlash });
-			callback(new Error("Not allowed by CORS"));
-		},
-		credentials: true,
-		maxAge: 86400, // cache pre-flight for 24 hours
-	}),
+      // Log rejected origin for debugging, then deny
+      logger.warn("CORS blocked origin", { origin: originWithoutSlash });
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    maxAge: 86400, // cache pre-flight for 24 hours
+  }),
 );
 
 // Reject known crawler/scanner user-agents BEFORE any route runs — crawlers
@@ -258,60 +273,52 @@ app.use(
 app.use(botBlocker);
 
 app.use(
-	helmet({
-		crossOriginResourcePolicy: { policy: "cross-origin" },
-		contentSecurityPolicy: {
-			directives: {
-				defaultSrc: ["'self'"],
-				scriptSrc: ["'self'"],
-				styleSrc: [
-					"'self'",
-					"'unsafe-inline'",
-					"https://fonts.googleapis.com",
-				],
-				fontSrc: ["'self'", "https://fonts.gstatic.com"],
-				imgSrc: [
-					"'self'",
-					"data:",
-					"blob:",
-					"https://res.cloudinary.com",
-					"https://images.unsplash.com",
-					// Bot avatars/banners/glance media: real portraits, illustrated
-					// characters, animated GIFs, and seeded photos.
-					"https://randomuser.me",
-					"https://api.dicebear.com",
-					"https://media.giphy.com",
-					"https://picsum.photos",
-				],
-				connectSrc: [
-					"'self'",
-					"https://res.cloudinary.com",
-					env.CLIENT_URL,
-				],
-				// WebSocket connections to the server are implicitly allowed via "'self'"
-				// Bot video posts/glances play from these free public CDNs.
-				mediaSrc: [
-					"'self'",
-					"blob:",
-					"data:",
-					"https://interactive-examples.mdn.mozilla.net",
-					"https://media.w3.org",
-					"https://test-videos.co.uk",
-				],
-				frameAncestors: ["'none'"],
-				formAction: ["'self'"],
-				objectSrc: ["'none'"],
-				baseUri: ["'self'"],
-			},
-		},
-		hsts: {
-			maxAge: 31536000,
-			includeSubDomains: true,
-			preload: true,
-		},
-		noSniff: true,
-		referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-	}),
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://res.cloudinary.com",
+          "https://images.unsplash.com",
+          // Bot avatars/banners/glance media: real portraits, illustrated
+          // characters, animated GIFs, and seeded photos.
+          "https://randomuser.me",
+          "https://api.dicebear.com",
+          "https://media.giphy.com",
+          "https://picsum.photos",
+        ],
+        connectSrc: ["'self'", "https://res.cloudinary.com", env.CLIENT_URL],
+        // WebSocket connections to the server are implicitly allowed via "'self'"
+        // Bot video posts/glances play from these free public CDNs.
+        mediaSrc: [
+          "'self'",
+          "blob:",
+          "data:",
+          "https://interactive-examples.mdn.mozilla.net",
+          "https://media.w3.org",
+          "https://test-videos.co.uk",
+        ],
+        frameAncestors: ["'none'"],
+        formAction: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+    noSniff: true,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  }),
 );
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -319,31 +326,31 @@ app.use(cookieParser());
 
 // Request ID Middleware — must run before timeout & logging middlewares
 app.use((req: Request, res: Response, next: NextFunction) => {
-	req.requestId = randomUUID();
-	next();
+  req.requestId = randomUUID();
+  next();
 });
 
 // Minimal Request Logging Middleware — only logs errors (4xx/5xx) and slow requests
 app.use((req: Request, res: Response, next: NextFunction) => {
-	const start = Date.now();
-	res.on("finish", () => {
-		const duration = Date.now() - start;
-		const statusCode = res.statusCode;
-		// Only log on server errors (5xx), client errors (4xx), or requests over 5 seconds
-		if (statusCode >= 400 || duration > 5000) {
-			logger.warn(`${req.method} ${req.path} ${statusCode} ${duration}ms`, {
-				requestId: req.requestId,
-				method: req.method,
-				path: req.path,
-				statusCode,
-				durationMs: duration,
-				// User-agent on error/slow lines so you can see WHO is hitting
-				// the API (crawler spam shows up here as 4xx floods).
-				userAgent: req.headers["user-agent"] || null,
-			});
-		}
-	});
-	next();
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    const statusCode = res.statusCode;
+    // Only log on server errors (5xx), client errors (4xx), or requests over 5 seconds
+    if (statusCode >= 400 || duration > 5000) {
+      logger.warn(`${req.method} ${req.path} ${statusCode} ${duration}ms`, {
+        requestId: req.requestId,
+        method: req.method,
+        path: req.path,
+        statusCode,
+        durationMs: duration,
+        // User-agent on error/slow lines so you can see WHO is hitting
+        // the API (crawler spam shows up here as 4xx floods).
+        userAgent: req.headers["user-agent"] || null,
+      });
+    }
+  });
+  next();
 });
 
 // API GET responses: short-lived browser caching + stale-while-revalidate.
@@ -417,114 +424,114 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // (Googlebot, Bingbot, and most AI crawlers) fetch this before crawling and
 // back off. The non-compliant ones are handled by botBlocker above.
 app.get("/robots.txt", (_req: Request, res: Response) => {
-	res.setHeader("Content-Type", "text/plain");
-	return res.send(
-		[
-			"# Orbit is a private, invite-only app \u2014 there is nothing to index.",
-			"# Crawling it only burns the free-tier API bandwidth.",
-			"User-agent: *",
-			"Disallow: /",
-			"",
-			"# AI crawlers \u2014 explicit, in case they mishandle wildcards",
-			"User-agent: GPTBot",
-			"Disallow: /",
-			"User-agent: ClaudeBot",
-			"Disallow: /",
-			"User-agent: PerplexityBot",
-			"Disallow: /",
-			"User-agent: Bytespider",
-			"Disallow: /",
-			"User-agent: Amazonbot",
-			"Disallow: /",
-			"User-agent: CCBot",
-			"Disallow: /",
-			"User-agent: Meta-ExternalAgent",
-			"Disallow: /",
-			"User-agent: Google-Extended",
-			"Disallow: /",
-			"User-agent: Applebot-Extended",
-			"Disallow: /",
-			"User-agent: AhrefsBot",
-			"Disallow: /",
-			"User-agent: SemrushBot",
-			"Disallow: /",
-			"User-agent: MJ12bot",
-			"Disallow: /",
-		].join("\n"),
-	);
+  res.setHeader("Content-Type", "text/plain");
+  return res.send(
+    [
+      "# Orbit is a private, invite-only app \u2014 there is nothing to index.",
+      "# Crawling it only burns the free-tier API bandwidth.",
+      "User-agent: *",
+      "Disallow: /",
+      "",
+      "# AI crawlers \u2014 explicit, in case they mishandle wildcards",
+      "User-agent: GPTBot",
+      "Disallow: /",
+      "User-agent: ClaudeBot",
+      "Disallow: /",
+      "User-agent: PerplexityBot",
+      "Disallow: /",
+      "User-agent: Bytespider",
+      "Disallow: /",
+      "User-agent: Amazonbot",
+      "Disallow: /",
+      "User-agent: CCBot",
+      "Disallow: /",
+      "User-agent: Meta-ExternalAgent",
+      "Disallow: /",
+      "User-agent: Google-Extended",
+      "Disallow: /",
+      "User-agent: Applebot-Extended",
+      "Disallow: /",
+      "User-agent: AhrefsBot",
+      "Disallow: /",
+      "User-agent: SemrushBot",
+      "Disallow: /",
+      "User-agent: MJ12bot",
+      "Disallow: /",
+    ].join("\n"),
+  );
 });
 
 // Lightweight liveness probe — intentionally skips DB/Redis checks so it
 // returns 200 instantly regardless of dependency state. Used by the internal
 // keep-alive pinger (and can be wired to external uptime monitors).
 app.get("/api/ping", (_req: Request, res: Response) => {
-	return res.status(200).json({
-		success: true,
-		message: "pong",
-		timestamp: new Date().toISOString(),
-	});
+  return res.status(200).json({
+    success: true,
+    message: "pong",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Enhanced Health Check with detailed system metrics
 app.get("/api/health", async (req: Request, res: Response) => {
-	const start = Date.now();
-	try {
-		let dbStatus = "disconnected";
-		let dbState = mongoose.connection.readyState;
-		const stateMap: Record<number, string> = {
-			0: "disconnected",
-			1: "connected",
-			2: "connecting",
-			3: "disconnecting",
-		};
-		dbStatus = stateMap[dbState] || "unknown";
+  const start = Date.now();
+  try {
+    let dbStatus = "disconnected";
+    let dbState = mongoose.connection.readyState;
+    const stateMap: Record<number, string> = {
+      0: "disconnected",
+      1: "connected",
+      2: "connecting",
+      3: "disconnecting",
+    };
+    dbStatus = stateMap[dbState] || "unknown";
 
-		let redisStatus = "disconnected";
-		let redisLatencyMs = -1;
-		try {
-			const redisStart = Date.now();
-			await redis.ping();
-			redisLatencyMs = Date.now() - redisStart;
-			redisStatus = "connected";
-		} catch {
-			redisStatus = "disconnected";
-		}
+    let redisStatus = "disconnected";
+    let redisLatencyMs = -1;
+    try {
+      const redisStart = Date.now();
+      await redis.ping();
+      redisLatencyMs = Date.now() - redisStart;
+      redisStatus = "connected";
+    } catch {
+      redisStatus = "disconnected";
+    }
 
-		const allHealthy = dbState === 1 && redisStatus === "connected";
-		const memoryUsage = process.memoryUsage();
+    const allHealthy = dbState === 1 && redisStatus === "connected";
+    const memoryUsage = process.memoryUsage();
 
-		return res.status(allHealthy ? 200 : 503).json({
-			success: allHealthy,
-			message: allHealthy ? "Server is healthy!" : "Server is unhealthy!",
-			timestamp: new Date().toISOString(),
-			requestId: req.requestId,
-			uptime: process.uptime(),
-			checks: {
-				database: {
-					status: dbStatus,
-					state: dbState,
-				},
-				redis: {
-					status: redisStatus,
-					latencyMs: redisLatencyMs,
-				},
-			},
-			memory: {
-				rss: Math.round(memoryUsage.rss / 1024 / 1024) + "MB",
-				heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + "MB",
-				heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + "MB",
-			},
-			responseTimeMs: Date.now() - start,
-		});
-	} catch (err: any) {
-		logger.error("Health check failed", { error: err.message });
-		return res.status(503).json({
-			success: false,
-			message: "Server is unhealthy!",
-			timestamp: new Date().toISOString(),
-			requestId: req.requestId,
-		});
-	}
+    return res.status(allHealthy ? 200 : 503).json({
+      success: allHealthy,
+      message: allHealthy ? "Server is healthy!" : "Server is unhealthy!",
+      timestamp: new Date().toISOString(),
+      requestId: req.requestId,
+      uptime: process.uptime(),
+      checks: {
+        database: {
+          status: dbStatus,
+          state: dbState,
+        },
+        redis: {
+          status: redisStatus,
+          latencyMs: redisLatencyMs,
+        },
+      },
+      memory: {
+        rss: Math.round(memoryUsage.rss / 1024 / 1024) + "MB",
+        heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024) + "MB",
+        heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024) + "MB",
+      },
+      responseTimeMs: Date.now() - start,
+    });
+  } catch (err: any) {
+    logger.error("Health check failed", { error: err.message });
+    return res.status(503).json({
+      success: false,
+      message: "Server is unhealthy!",
+      timestamp: new Date().toISOString(),
+      requestId: req.requestId,
+    });
+  }
 });
 
 // Global rate limiter — baseline protection for all API routes
@@ -627,134 +634,134 @@ app.use(sentryErrorHandler as any);
 
 // 404 Handler
 app.use((req: Request, res: Response) => {
-	return res.status(404).json({
-		success: false,
-		message: `Route ${req.originalUrl} not found!`,
-		requestId: req.requestId,
-	});
+  return res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found!`,
+    requestId: req.requestId,
+  });
 });
 
 /** Error shape from known libraries */
 interface ZodIssue {
-	path: (string | number)[];
-	message: string;
+  path: (string | number)[];
+  message: string;
 }
 
 interface MongoError extends Error {
-	code?: number;
-	keyPattern?: Record<string, unknown>;
-	issues?: ZodIssue[];
+  code?: number;
+  keyPattern?: Record<string, unknown>;
+  issues?: ZodIssue[];
 }
 
 // Global Error Handler
 app.use((err: MongoError, req: Request, res: Response, _next: NextFunction) => {
-	const message = err.message || "Internal Server Error";
-	logger.error(message, {
-		requestId: req.requestId,
-		stack: err.stack,
-	});
+  const message = err.message || "Internal Server Error";
+  logger.error(message, {
+    requestId: req.requestId,
+    stack: err.stack,
+  });
 
-	let statusCode = 500;
-	let responseMessage = message;
-	let errors: { field: string; message: string }[] = [];
+  let statusCode = 500;
+  let responseMessage = message;
+  let errors: { field: string; message: string }[] = [];
 
-	// Handle Zod errors specifically
-	if (err.name === "ZodError" && err.issues) {
-		statusCode = 400;
-		errors = err.issues.map((issue) => ({
-			field: issue.path.join("."),
-			message: issue.message,
-		}));
-		responseMessage = errors[0]?.message || "Validation failed";
-	} else if (err instanceof AppError) {
-		statusCode = err.statusCode;
-		responseMessage = err.message;
-	} else if (err.name === "ValidationError") {
-		statusCode = 400;
-		// Sanitize mongoose validation — send only the first human-readable
-		// reason, never the raw dump (which reveals the model name and the
-		// full field list to the client).
-		const firstReason = (
-			(err as any).errors as
-				| Record<string, { message?: string }>
-				| undefined
-		)?.[Object.keys((err as any).errors || {})[0] ?? ""];
-		responseMessage = firstReason?.message || "Validation failed";
-	} else if (
-		(err.name === "MongoError" || err.name === "MongoServerError") &&
-		err.code === 11000
-	) {
-		statusCode = 409;
-		const field = err.keyPattern ? Object.keys(err.keyPattern)[0] : null;
-		responseMessage = field ? `${field} already exists` : "Duplicate field value";
-	} else {
-		// Unexpected/internal error — never leak internals to the client.
-		// The real message + stack are logged server-side above; the client
-		// only ever sees a generic message.
-		statusCode = 500;
-		responseMessage = "Internal server error";
-	}
+  // Handle Zod errors specifically
+  if (err.name === "ZodError" && err.issues) {
+    statusCode = 400;
+    errors = err.issues.map((issue) => ({
+      field: issue.path.join("."),
+      message: issue.message,
+    }));
+    responseMessage = errors[0]?.message || "Validation failed";
+  } else if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    responseMessage = err.message;
+  } else if (err.name === "ValidationError") {
+    statusCode = 400;
+    // Sanitize mongoose validation — send only the first human-readable
+    // reason, never the raw dump (which reveals the model name and the
+    // full field list to the client).
+    const firstReason = (
+      (err as any).errors as Record<string, { message?: string }> | undefined
+    )?.[Object.keys((err as any).errors || {})[0] ?? ""];
+    responseMessage = firstReason?.message || "Validation failed";
+  } else if (
+    (err.name === "MongoError" || err.name === "MongoServerError") &&
+    err.code === 11000
+  ) {
+    statusCode = 409;
+    const field = err.keyPattern ? Object.keys(err.keyPattern)[0] : null;
+    responseMessage = field
+      ? `${field} already exists`
+      : "Duplicate field value";
+  } else {
+    // Unexpected/internal error — never leak internals to the client.
+    // The real message + stack are logged server-side above; the client
+    // only ever sees a generic message.
+    statusCode = 500;
+    responseMessage = "Internal server error";
+  }
 
-	return res.status(statusCode).json({
-		success: false,
-		message: responseMessage,
-		...(errors.length > 0 && { errors }),
-		requestId: req.requestId,
-		...(env.NODE_ENV === "development" && { stack: err.stack }),
-		// Structured fields controllers attach to AppError (e.g. slowmode's
-		// retryAfterSeconds) flow through to the client for countdown UI.
-		...((err as any).retryAfterSeconds !== undefined && {
-			retryAfterSeconds: (err as any).retryAfterSeconds,
-		}),
-	});
+  return res.status(statusCode).json({
+    success: false,
+    message: responseMessage,
+    ...(errors.length > 0 && { errors }),
+    requestId: req.requestId,
+    ...(env.NODE_ENV === "development" && { stack: err.stack }),
+    // Structured fields controllers attach to AppError (e.g. slowmode's
+    // retryAfterSeconds) flow through to the client for countdown UI.
+    ...((err as any).retryAfterSeconds !== undefined && {
+      retryAfterSeconds: (err as any).retryAfterSeconds,
+    }),
+  });
 });
 
 connectDB().then(async () => {
-	await initSocket(server);
+  await initSocket(server);
 
-	// Bind the HTTP port BEFORE starting background services. If any of them
-	// threw, the listen below would never run and the process would sit alive
-	// without an open port (Render's port scan then flags the deploy and the
-	// service enters a restart loop) — so the port comes first.
-	server.listen(port, () => {
-		logger.info(`Server is running on PORT: ${port}`);
-	});
+  // Bind the HTTP port BEFORE starting background services. If any of them
+  // threw, the listen below would never run and the process would sit alive
+  // without an open port (Render's port scan then flags the deploy and the
+  // service enters a restart loop) — so the port comes first.
+  server.listen(port, () => {
+    logger.info(`Server is running on PORT: ${port}`);
+  });
 
-	// Start background affinity recomputation for feed ranking
-	startAffinityScheduler();
+  // Start background affinity recomputation for feed ranking
+  startAffinityScheduler();
 
-	// Start daily pruner for read notifications older than 30 days
-	startNotificationPruner();
+  // Start daily pruner for read notifications older than 30 days
+  startNotificationPruner();
 
-	// Start daily mission reset (cleans up old records at midnight)
-	startDailyMissionReset();
+  // Start daily mission reset (cleans up old records at midnight)
+  startDailyMissionReset();
 
-	// Keep free-tier hosting awake — pings /api/ping every 5 minutes
-	startKeepAlive();
+  // Keep free-tier hosting awake — pings /api/ping every 5 minutes
+  startKeepAlive();
 
-	// Check for broken streaks every hour
-	startStreakBreakChecker();
+  // Check for broken streaks every hour
+  startStreakBreakChecker();
 
-	// Publish scheduled posts the moment they're due — exact-time BullMQ
-	// delayed jobs when REDIS_URL is configured, 1-min cron poll otherwise.
-	startScheduledPostPublisher();
+  // Publish scheduled posts the moment they're due — exact-time BullMQ
+  // delayed jobs when REDIS_URL is configured, 1-min cron poll otherwise.
+  startScheduledPostPublisher();
 
-	// Deliver scheduled DM/community messages at their exact time — BullMQ
-	// delayed jobs when REDIS_URL is configured, 1-min cron safety net
-	// otherwise. Idempotent with the job path, so both can run at once.
-	startScheduledMessagePublisher();
+  // Deliver scheduled DM/community messages at their exact time — BullMQ
+  // delayed jobs when REDIS_URL is configured, 1-min cron safety net
+  // otherwise. Idempotent with the job path, so both can run at once.
+  startScheduledMessagePublisher();
 
-	// BullMQ background workers (scheduled-post publishing + scheduled
-	// message delivery + email delivery) — no-op when REDIS_URL isn't set.
-	// Never throws; failures fall back to the inline/cron paths and are
-	// logged.
-	startQueueWorkers();
+  // BullMQ background workers (scheduled-post publishing + scheduled
+  // message delivery + email delivery) — no-op when REDIS_URL isn't set.
+  // Never throws; failures fall back to the inline/cron paths and are
+  // logged.
+  startQueueWorkers();
 
-	// Pull fresh public content from Bluesky/Mastodon/Lemmy into the Web tab
-	startExternalSync();
+  // Pull fresh public content from Bluesky/Mastodon/Lemmy into the Web tab
+  startExternalSync();
 
-	// Bot farm heartbeat — simulated users keep the app alive (config-gated)
-	startBotFarm();
+  // Bot farm heartbeat — simulated users keep the app alive (config-gated)
+  startBotFarm();
 });
 
 // enable gzip compression for responses larger than 1KB

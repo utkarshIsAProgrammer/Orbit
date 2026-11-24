@@ -1,35 +1,38 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
-import Comment from "../models/comment.model";
-import Post from "../models/post.model";
-import ExternalPost from "../models/externalPost.model";
+import { clearByPattern, clearCommentsCache, getCache, setCache } from "../configs/cache";
 import { env } from "../configs/env";
+import { sanitizePlainText } from "../configs/sanitize";
+import { emitCommentDeleted, emitCommentReply, emitCommentUpdated, emitPostComment } from "../configs/socket";
+import Comment from "../models/comment.model";
+import ExternalPost from "../models/externalPost.model";
 import Like from "../models/like.model";
 import Notification from "../models/notification.model";
+import Post from "../models/post.model";
 import { User } from "../models/user.model";
 import {
-  addCommentSchema,
-  updateCommentSchema,
+    updateCommentSchema
 } from "../schemas/comment.schema";
-import { getCache, setCache, clearCommentsCache, clearByPattern } from "../configs/cache";
-import { createNotification, extractMentions } from "../utilities/notification";
-import { areMutuallyBlocked, getBlockedUserIds } from "../utilities/blockCheck";
-import { sanitizePlainText } from "../configs/sanitize";
-import { emitPostComment, emitCommentReply, emitCommentDeleted, emitCommentUpdated } from "../configs/socket";
 import { logInteraction } from "../services/affinityService";
-import { awardXP } from "../services/xpService";
-import { checkBadgesAndNotify } from "../services/badgeService";
-import { checkAllRounderBadge } from "../services/badgeService";
-import { progressMission } from "../services/dailyMissionService";
 import { deliverForwardToChat } from "../services/chatForwardService";
-import { deliverWebhookEvent } from "./webhook.controller";
+import { progressMission } from "../services/dailyMissionService";
+import { awardXP } from "../services/xpService";
+import { areMutuallyBlocked, getBlockedUserIds } from "../utilities/blockCheck";
+import { AppError, BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from "../utilities/errors";
 import { logger } from "../utilities/logger";
-import { AppError, BadRequestError, NotFoundError, UnauthorizedError, ForbiddenError } from "../utilities/errors";
+import { createNotification, extractMentions } from "../utilities/notification";
 import { canInteractWithPost } from "../utilities/postVisibility";
+import {
+    AppError,
+    BadRequestError,
+    NotFoundError,
+    UnauthorizedError,
+    ForbiddenError,
 
-type Params = {
-  postId: string;
-};
+    type Params
+} from {
+        postId: string
+    };
 
 type CommentParams = {
   commentId: string;
@@ -145,6 +148,9 @@ const attachLikedByMe = async (
   const ids = comments.map((c: any) => c._id);
   const likes = await Like.find({ author: currentUserId, comment: { $in: ids } })
     .select("comment")
+    author: currentUserId,
+    comment: { $in: ids },
+ 
     .lean();
   const likedSet = new Set(likes.map((l: any) => l.comment.toString()));
   return comments.map((c: any) => ({
@@ -156,6 +162,8 @@ const attachLikedByMe = async (
 // Get all comments for a specific post (including replies)
 export const getAllCommentsForPost = async (req: Request<Params>, res: Response) => {
   const { postId } = req.params;
+  req: Request<Params>,
+  res: Response,
 
   try {
     // validate id
@@ -191,11 +199,16 @@ export const getAllCommentsForPost = async (req: Request<Params>, res: Response)
     } catch (err: any) {
       logger.error(`Cache error in getAllCommentsForPost!`, { error: err.message });
     }
+        error: err.message,
+     
 
     let blockedCommentIds: string[] = [];
     if (blockedIds.length > 0) {
       const blockedComments = await Comment.find({ post: postId, author: { $in: blockedIds } })
         .select("_id")
+        post: postId,
+        author: { $in: blockedIds },
+     
         .lean();
       blockedCommentIds = blockedComments.map((c) => c._id.toString());
     }
@@ -205,6 +218,9 @@ export const getAllCommentsForPost = async (req: Request<Params>, res: Response)
       .sort({ _id: -1 })
       .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
       .lean();
+        "author",
+        "username fullName profilePic isVerified statusText waitlistPerk",
+      
 
     // Filter out comments (and their reply subtrees) from blocked users
     const blockedSet = new Set(blockedCommentIds);
@@ -226,6 +242,8 @@ export const getAllCommentsForPost = async (req: Request<Params>, res: Response)
     } catch (err: any) {
       logger.error(`Cache set error in getAllCommentsForPost!`, { error: err.message });
     }
+        error: err.message,
+     
 
     return res.status(200).json(responseData);
   } catch (err: any) {
@@ -296,6 +314,9 @@ export const getComment = async (req: Request<Params>, res: Response) => {
       .limit(limit + 1)
       .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
       .lean();
+        "author",
+        "username fullName profilePic isVerified statusText waitlistPerk",
+      
 
     // check more comments exists
     const hasMore = comments.length > limit;
@@ -358,13 +379,20 @@ export const getAllComments = async (req: Request, res: Response) => {
       .limit(limit + 1)
       .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
       .lean();
+        "author",
+        "username fullName profilePic isVerified statusText waitlistPerk",
+      
 
     // closeFriends posts are invisible to non-close-friends — never expose
     // their comment threads in the global list either.
     let visibleComments = comments;
     if (comments.length > 0) {
       const postIds = [...new Set(comments.map((c: any) => c.post?.toString()).filter(Boolean))];
-      // N+1 → one batch: the per-post visibility checks are independent, so
+      // N+1 → one ba
+        ...new Set(
+          comments.map((c: any) => c.post?.toString()).filter(Boolean),
+        ),
+      
       // awaiting them in a loop serialized up to ~50 Mongo round-trips.
       const results = await Promise.all(
         postIds.map((pid) => canInteractWithPost(pid, currentUserId)),
@@ -374,8 +402,8 @@ export const getAllComments = async (req: Request, res: Response) => {
         if (results[i]?.allowed) visiblePostIds.add(pid);
       });
       visibleComments = comments.filter((c: any) =>
-        !c.post || visiblePostIds.has(c.post.toString()),
-      );
+        !c.post || visiblePostIds.has(c.
+        (c: any) =>;
     }
 
     const hasMore = visibleComments.length > limit;
@@ -398,6 +426,8 @@ export const getAllComments = async (req: Request, res: Response) => {
     } catch (err: any) {
       logger.error(`Cache set error in getAllComments!`, { error: err.message });
     }
+        error: err.message,
+     
 
     return res.status(200).json(responseData);
   } catch (err: any) {
@@ -432,6 +462,9 @@ export const getCommentReplies = async (
     if (parentCommentDoc?.post) {
       const { allowed } = await canInteractWithPost(parentCommentDoc.post.toString(), currentUserId);
       if (!allowed) {
+        parentCommentDoc.post.toString(),
+        currentUserId,
+      
         throw new NotFoundError("Comment not found!");
       }
     }
@@ -463,6 +496,9 @@ export const getCommentReplies = async (
       .limit(limit + 1)
       .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
       .lean();
+        "author",
+        "username fullName profilePic isVerified statusText waitlistPerk",
+      
 
     const hasMore = replies.length > limit;
     if (hasMore) {
@@ -484,6 +520,8 @@ export const getCommentReplies = async (
     } catch (err: any) {
       logger.error(`Cache set error in getCommentReplies!`, { error: err.message });
     }
+        error: err.message,
+     
 
     return res.status(200).json(responseData);
   } catch (err: any) {
@@ -504,6 +542,8 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     if (!result.success) {
       throw new BadRequestError(result.error.issues[0]?.message || "Invalid Data!");
     }
+        result.error.issues[0]?.message || "Invalid Data!",
+      
 
     // check user auth
     if (!author) {
@@ -516,9 +556,7 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     const [parentComment, postAuthorDoc] = await Promise.all([
       parent
         ? Comment.findById(parent)
-            .select("_id author post")
-            .lean()
-        : Promise.resolve(null),
+            .select("_id author po.select("_id author post")omise.resolve(null),
       Post.findById(postId).select("author visibility").lean(),
     ]);
 
@@ -536,16 +574,25 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     // All three checks are independent — run them in one round-trip.
     const [postAuthorBlocked, canInteract, parentAuthorBlocked] = await Promise.all([
       postAuthorDoc
-        ? areMutuallyBlocked(author.toString(), postAuthorDoc.author.toString())
-        : Promise.resolve(false),
-      postAuthorDoc
-        ? canInteractWithPost(postId, author.toString()).then((r) => r.allowed)
-        : Promise.resolve(true),
-      parentComment && parentComment.author?.toString() !== author.toString()
-        ? areMutuallyBlocked(author.toString(), parentComment.author.toString())
-        : Promise.resolve(false),
-    ]);
-    if (postAuthorBlocked) {
+      await Promise.all([
+        postAuthorDoc
+          ? areMutuallyBlocked(
+              author.toString(),
+              postAuthorDoc.author.toString(),
+            )
+          : Promise.resolve(false),
+        postAuthorDoc
+          ? canInteractWithPost(postId, author.toString()).then(
+              (r) => r.allowed,
+            )
+          : Promise.resolve(true),
+        parentComment && parentComment.author?.toString() !== author.toString()
+          ? areMutuallyBlocked(
+              author.toString(),
+              parentComment.author.toString(),
+            )
+          : Promise.resolve(false),
+      if (postAuthorBlocked) {
       throw new ForbiddenError("Cannot comment on this post!");
     }
     // closeFriends posts can only be commented on by the author / close friends
@@ -558,34 +605,42 @@ export const addComment = async (req: Request<Params>, res: Response) => {
 
     // ensure post id
     if (!postId)
-      throw new BadRequestError("Post ID required");
-
+      throw new 
     const sanitizedContent = sanitizePlainText(result.data.content);
 
     // save comment
     const comment = new Comment({ ...result.data, content: sanitizedContent, author, post: postId });
     await comment.save();
+      ...result.data,
+      content: sanitizedContent,
+      author,
+      post: postId,
+   
 
     // populate comment for socket + increment the counts — all independent
     // after the save, so they run in ONE round-trip instead of three.
     const [populatedComment, updatedPost, updatedParentComment] = await Promise.all([
       Comment.findById(comment._id)
-        .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
-        .lean(),
-      Post.findByIdAndUpdate(
-        postId,
-        { $inc: { commentsCount: 1 } },
-        { returnDocument: "after" },
-      ),
-      parent
-        ? Comment.findByIdAndUpdate(
-            parent,
-            { $inc: { repliesCount: 1 } },
-            { returnDocument: "after" },
-          )
+      await Promise.all([
+        Comment.findById(comment._id)
+          .populate(
+            "author",
+            "username fullName profilePic isVerified statusText waitlistPerk"
         : Promise.resolve(null),
-    ]);
-
+    ]);  .lean(),
+        Post.findByIdAndUpdate(
+          postId,
+          { $inc: { commentsCount: 1 } },
+          { returnDocument: "after" },
+        ),
+        parent
+          ? Comment.findByIdAndUpdate(
+              parent,
+              { $inc: { repliesCount: 1 } },
+              { returnDocument: "after" },
+            )
+          : Promise.resolve(null),
+  
     const notifyRecipients = new Set<string>();
     if (updatedPost) {
       notifyRecipients.add(updatedPost.author.toString());
@@ -597,7 +652,7 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     // handle mentions
     const mentionedUserIds = await extractMentions(sanitizedContent);
     mentionedUserIds.forEach(userId => notifyRecipients.add(userId));
-
+(userId)
     // Don't send notification to self
     notifyRecipients.delete(author.toString());
 
@@ -607,29 +662,50 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     // it rides the same batch.
     const notifyTasks: Promise<any>[] = [...notifyRecipients].map((recipient) => {
       let notificationType: "comment" | "mention" = "comment";
-      if (mentionedUserIds.includes(recipient)) {
-        notificationType = "mention";
-      }
-      return createNotification({
-        recipient,
-        sender: author.toString(),
-        type: notificationType,
-        post: postId,
-        comment: comment._id.toString(),
-      });
-    });
-    notifyTasks.push(clearCommentsCache(postId));
+      (recipient) => {
+        let notificationType: "comment" | "mention" = "comment";
+        if (mentionedUserIds.includes(recipient)) {
+          notificationType = "mention";
+        }
+        return createNotification({
+          recipient,
+          sender: author.toString(),
+          type: notificationType,
+          post: postId,
+          comment: comment._id.toString(),
+        });
+      },
+    otifyTasks.push(clearCommentsCache(postId));
     await Promise.all(notifyTasks);
 
     // Emit socket event
     if (populatedComment && updatedPost) {
       if (parent && updatedParentComment) {
         emitCommentReply(postId, parent, populatedComment, author.toString(), updatedPost.commentsCount, (updatedParentComment as any).repliesCount);
-      } else if (parent) {
+      } else if (parent) 
+          postId,
+          parent,
+          populatedComment,
+          author.toString(),
+          updatedPost.commentsCount,
+          (updatedParentComment as any).repliesCount,
+        
         emitCommentReply(postId, parent, populatedComment, author.toString(), updatedPost.commentsCount, 1);
       } else {
+          postId,
+          parent,
+          populatedComment,
+          author.toString(),
+          updatedPost.commentsCount,
+          1,
+        
         emitPostComment(postId, populatedComment, author.toString(), updatedPost.commentsCount);
       }
+          postId,
+          populatedComment,
+          author.toString(),
+          updatedPost.commentsCount,
+        
     }
 
     // Webhooks — the post author hears their post was commented; the comment
@@ -664,7 +740,7 @@ export const addComment = async (req: Request<Params>, res: Response) => {
         postId,
         "comment",
         (updatedPost as any)?.hashtags || []
-      );
+      );,
     }
 
     // Award XP and progress mission (fire-and-forget). The dedupe key caps
@@ -677,9 +753,15 @@ export const addComment = async (req: Request<Params>, res: Response) => {
     // Achievement badges (fire-and-forget): commenter + post author
     checkBadgesAndNotify(author.toString(), "comment_made").catch(() => {});
       checkAllRounderBadge(author.toString()).catch(() => {});
-    if (updatedPost?.author && updatedPost.author.toString() !== author.toString()) {
-      checkBadgesAndNotify(updatedPost.author.toString(), "comment_received").catch(() => {});
-    }
+    checkAllRounderBadge(author.toString()).catch(() => {});
+    if (
+      updatedPost?.author &&
+      updatedPost.author.toString() !== author.toString()
+    ) {
+      checkBadgesAndNotify(
+        updatedPost.author.toString(),
+        "comment_received",
+      
 
     return res.status(201).json({
       success: true,
@@ -707,6 +789,8 @@ export const updateComment = async (
     if (!result.success) {
       throw new BadRequestError(result.error.issues[0]?.message || "Invalid Data!");
     }
+        result.error.issues[0]?.message || "Invalid Data!",
+      
 
     // check user auth
     if (!author) {
@@ -732,11 +816,14 @@ export const updateComment = async (
       commentId,
       { content: sanitizedContent, isEdited: true },
       { returnDocument: 'after', runValidators: true },
-    );
+    );"after"
 
     const updatedComment = await Comment.findById(commentId)
       .populate("author", "username fullName profilePic isVerified statusText waitlistPerk")
       .lean();
+        "author",
+        "username fullName profilePic isVerified statusText waitlistPerk",
+      
 
     // emit socket event for realtime update
     if (updatedComment) {
@@ -755,6 +842,8 @@ export const updateComment = async (
     if (err.statusCode && err.statusCode < 500) throw err;
     logger.error(`Error in the updateComment controller!`, { error: err.message });
     throw new AppError("Internal server error!");
+      error: err.message,
+   
   }
 };
 
@@ -833,13 +922,15 @@ export const deleteComment = async (
       );
     }
     
-    // if this is a reply, decrement parent's repliesCount
+// if this is a reply, decrement parent's repliesCount
     let updatedParentComment: unknown = null;
     if (comment.parent) {
       updatedParentComment = await Comment.findByIdAndUpdate(
         comment.parent,
         { $inc: { repliesCount: -1 } },      { returnDocument: 'after' });
     }
+        { returnDocument: "after" },
+      
 
     // clear cache
     if (comment.post) await clearCommentsCache(comment.post.toString());
@@ -851,6 +942,10 @@ export const deleteComment = async (
     if (comment.post && updatedPost) {
       emitCommentDeleted(comment.post.toString(), commentId, updatedPost.commentsCount);
     }
+        comment.post.toString(),
+        commentId,
+        updatedPost.commentsCount,
+      
 
     return res.status(200).json({
       success: true,
@@ -860,6 +955,8 @@ export const deleteComment = async (
     if (err.statusCode && err.statusCode < 500) throw err;
     logger.error(`Error in the deleteComment controller!`, { error: err.message });
     throw new AppError("Internal server error!");
+      error: err.message,
+   
   }
 };
 
